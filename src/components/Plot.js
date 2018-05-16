@@ -19,7 +19,7 @@ import AddCircleOutlineIcon from 'material-ui-icons/AddCircleOutline';
 import FolderOpenIcon from 'material-ui-icons/FolderOpen';
 import SaveIcon from 'material-ui-icons/Save';
 import Heart from 'mui-icons/cmdi/heart';
-import Dna from 'mui-icons/cmdi/Dna';
+import Dna from 'mui-icons/cmdi/dna';
 
 
 
