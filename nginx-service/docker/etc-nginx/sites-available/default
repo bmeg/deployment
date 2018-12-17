@@ -9,6 +9,8 @@ server {
 
     resolver %resolver_address% ipv6=off;
 
+    server_name bmeg-staging.ddns.net;
+
     lua_ssl_trusted_certificate /etc/ssl/certs/ca-certificates.crt;
     lua_ssl_verify_depth        5;
 

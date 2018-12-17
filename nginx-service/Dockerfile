@@ -13,9 +13,12 @@ RUN apt-get update && \
     mkdir /etc/nginx/http.conf.d && \
     sed 's%http {%include /etc/nginx/http.conf.d/*.conf;\n\nhttp {%' -i /etc/nginx/nginx.conf
 
+RUN echo 'deb http://ftp.debian.org/debian stretch-backports main' > /etc/apt/sources.list.d/certbot.list
+RUN apt-get update && apt-get install -y  python-certbot-nginx -t stretch-backports
+
 COPY ./access.lua /etc/nginx/lua/nginx-google-oauth/access.lua
 
 RUN echo 'copying'
 COPY ./docker/etc-nginx /etc/nginx
-
+COPY ./docker/etc-letsencrypt /etc/letsencrypt
 ENTRYPOINT ["/etc/nginx/run.sh"]
