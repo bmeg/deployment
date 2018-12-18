@@ -28,9 +28,6 @@ ifndef BMEG_SITE_BRANCH
 $(error BMEG_SITE_BRANCH is not set)
 endif
 
-ifndef PORT
-$(error PORT is not set)
-endif
 
 ifndef GRIP_SERVER
 $(error GRIP_SERVER is not set)
@@ -46,7 +43,7 @@ website:
 	cd ~/bmeg-site && hugo
 
 
-nginx: website
+nginx: 
 	echo copying static site to nginx ..................
 	rm -rf docker/etc-nginx/public || true
 	cp -r ~/bmeg-site/public docker/etc-nginx/public
@@ -56,7 +53,7 @@ build: nginx
 	docker build -t bmeg-nginx .
 
 run: build
-	docker run --rm -it -p $(PORT):$(PORT) -p 80:80 \
+	docker run --rm -it -p 443:443 -p 80:80 \
 	-e DEBUG=1  \
 	-e RESOLVER_ADDRESS=$(RESOLVER_ADDRESS) \
 	-e NGO_CALLBACK_SCHEME=https \
@@ -66,7 +63,6 @@ run: build
 	-e GRIP_SERVER=$(GRIP_SERVER) \
 	-e LETSENCRYPT_EMAIL=$(LETSENCRYPT_EMAIL) \
 	-e BASE_URL=$(BASE_URL) \
-	-e PORT=$(PORT) \
 	-v $(CURDIR)/docker/etc-letsencrypt:/etc/letsencrypt \
 	bmeg-nginx:latest
 

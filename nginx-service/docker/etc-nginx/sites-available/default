@@ -11,7 +11,7 @@ server {
 
 server {
 
-    listen *:%port% default_server ssl;
+    listen *:443 default_server ssl;
 
 
     resolver %resolver_address% ipv6=off;
