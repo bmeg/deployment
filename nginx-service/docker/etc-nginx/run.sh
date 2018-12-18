@@ -45,6 +45,5 @@ if [ "${DEBUG}" ]; then
   env | grep '^\(NGO_.*\|LOCATIONS\|PORT\|GRIP_SERVER\)=' | sort -n | cat -n
 fi
 
-certbot --nginx -m ${LETSENCRYPT_EMAIL} --agree-tos  -d ${BASE_URL} --noninteractive
+#certbot --nginx -m ${LETSENCRYPT_EMAIL} --agree-tos  -d ${BASE_URL} --noninteractive
 exec nginx -g "daemon off;" -c /etc/nginx/nginx.conf
-# exec nginx -g "daemon on;" -c /etc/nginx/nginx.conf
