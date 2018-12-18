@@ -30,3 +30,15 @@ docker run --rm -it -p 80:80 \
   -e NGO_CLIENT_SECRET="--8sqcdQeDYADwqMPhV38dry" \
   -e NGO_TOKEN_SECRET="zKzxBPTFHCHkHfQFyLKDrdkV7" \
   nginx-google-oauth:latest
+
+
+
+sudo snap install docker
+sudo addgroup --system docker
+sudo adduser $USER docker
+newgrp docker
+sudo snap disable docker
+sudo snap enable docker
+docker ps
+sudo apt install make
+sudo apt update ; sudo apt install hugo
