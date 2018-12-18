@@ -5,6 +5,7 @@ RESOLVER_ADDRESS=${RESOLVER_ADDRESS:-8.8.8.8}
 
 sed "s/%port%/${PORT}/" -i /etc/nginx/sites-available/default
 sed "s/%resolver_address%/${RESOLVER_ADDRESS}/" -i /etc/nginx/sites-available/default
+sed "s/arachne.compbio.ohsu.edu/${GRIP_SERVER}/" -i /etc/nginx/snippets/demo-locations.conf
 
 if [ -z "${NGO_CLIENT_ID}" ]; then
   echo "NGO_CLIENT_ID is not set"
@@ -41,7 +42,8 @@ if [ "${DEBUG}" ]; then
   echo "## /etc/nginx/snippets/demo-locations.conf ##"
   cat -n /etc/nginx/snippets/demo-locations.conf
   echo "## environment ##"
-  env | grep '^\(NGO_.*\|LOCATIONS\|PORT\)=' | sort -n | cat -n
+  env | grep '^\(NGO_.*\|LOCATIONS\|PORT\|GRIP_SERVER\)=' | sort -n | cat -n
 fi
 
+#certbot --nginx -m ${LETSENCRYPT_EMAIL} --agree-tos  -d ${BASE_URL} --noninteractive
 exec nginx -g "daemon off;" -c /etc/nginx/nginx.conf

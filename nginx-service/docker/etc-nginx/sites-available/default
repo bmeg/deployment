@@ -4,13 +4,25 @@
 lua_package_path '/etc/nginx/lua/?.lua;';
 
 server {
+	listen *:80;
+        server_name bmeg-staging.ddns.net;
+	return 301 https://$host$request_uri;
+}
 
-    listen %port%;
+server {
+
+    listen *:%port% default_server ssl;
+
 
     resolver %resolver_address% ipv6=off;
 
+    server_name bmeg-staging.ddns.net;
+
     lua_ssl_trusted_certificate /etc/ssl/certs/ca-certificates.crt;
     lua_ssl_verify_depth        5;
+    
+    ssl_certificate /etc/letsencrypt/live/bmeg-staging.ddns.net/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/bmeg-staging.ddns.net/privkey.pem;
 
     error_log /dev/stderr notice;
     access_log /dev/stdout;
