@@ -42,7 +42,7 @@ website:
 	cd ~ && git clone https://github.com/bmeg/bmeg-site
 	cd ~/bmeg-site && git fetch --all && git checkout $(BMEG_SITE_BRANCH)
 	echo Setting base url in hugo config ..................
-	cd ~/bmeg-site && sed -i.bak 's~baseURL:.*~baseURL: $(BASE_URL)~' config.yaml
+	cd ~/bmeg-site && sed -i.bak 's~baseURL:.*~baseURL: $(BASE_URL)/~' config.yaml
 	cd ~/bmeg-site && hugo
 
 
@@ -56,7 +56,7 @@ build: nginx
 	docker build -t bmeg-nginx .
 
 run: build
-	docker run --rm -it -p $(PORT):$(PORT) \
+	docker run --rm -it -p $(PORT):$(PORT) -p 80:80 \
 	-e DEBUG=1  \
 	-e RESOLVER_ADDRESS=$(RESOLVER_ADDRESS) \
 	-e NGO_CALLBACK_SCHEME=https \
@@ -67,6 +67,7 @@ run: build
 	-e LETSENCRYPT_EMAIL=$(LETSENCRYPT_EMAIL) \
 	-e BASE_URL=$(BASE_URL) \
 	-e PORT=$(PORT) \
+	-v $(CURDIR)/docker/etc-letsencrypt:/etc/letsencrypt \
 	bmeg-nginx:latest
 
 clean:
