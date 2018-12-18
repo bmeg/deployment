@@ -20,5 +20,4 @@ COPY ./access.lua /etc/nginx/lua/nginx-google-oauth/access.lua
 
 RUN echo 'copying'
 COPY ./docker/etc-nginx /etc/nginx
-COPY ./docker/etc-letsencrypt /etc/letsencrypt
 ENTRYPOINT ["/etc/nginx/run.sh"]
