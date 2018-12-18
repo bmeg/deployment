@@ -40,10 +40,10 @@ website:
 	cd ~/bmeg-site && git fetch --all && git checkout $(BMEG_SITE_BRANCH)
 	echo Setting base url in hugo config ..................
 	cd ~/bmeg-site && sed -i.bak 's~baseURL:.*~baseURL: $(BASE_URL)/~' config.yaml
-	cd ~/bmeg-site && hugo
+	cd ~/bmeg-site && make clean build
 
 
-nginx: 
+nginx:
 	echo copying static site to nginx ..................
 	rm -rf docker/etc-nginx/public || true
 	cp -r ~/bmeg-site/public docker/etc-nginx/public
