@@ -53,7 +53,7 @@ build: nginx
 	docker build -t bmeg-nginx .
 
 run: build
-	docker run --rm -p 443:443 -p 80:80 \
+	echo docker run --restart unless-stopped --name bmeg-nginx -p 443:443 -p 80:80 \
 	-e DEBUG=1  \
 	-e RESOLVER_ADDRESS=$(RESOLVER_ADDRESS) \
 	-e NGO_CALLBACK_SCHEME=https \
@@ -67,5 +67,7 @@ run: build
 	bmeg-nginx:latest
 
 clean:
+	docker kill bmeg-nginx || true
+	docker rm bmeg-nginx || true
 	rm -r docker/etc-nginx/public || true
 	docker rmi bmeg-nginx || true
