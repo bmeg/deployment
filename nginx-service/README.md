@@ -1,5 +1,3 @@
-### Pre-requisites
-
 
 ### Pre-requisites
 Assumes:
@@ -50,6 +48,7 @@ cd bmeg/nginx-service
 ```
 
 Before continuing, setup your oauth server
+
 ![image](https://user-images.githubusercontent.com/47808/50254570-69238980-03a3-11e9-9dd8-4e592a3289e4.png)
 
 
@@ -83,8 +82,9 @@ Before continuing, run the letsencrypt certbot and place the resulting directory
 # RUN
 
 ```
-# build image and create a docker run command 
+# build image and create a docker run command
 make run
 
+docker run --restart unless-stopped --name bmeg-nginx -p 443:443 -p 80:80 -e DEBUG=1 -e RESOLVER_ADDRESS=8.8.8.8 -e NGO_CALLBACK_SCHEME=https ...
 
 ```
