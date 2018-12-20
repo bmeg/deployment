@@ -70,11 +70,21 @@ export NGO_CLIENT_SECRET=<SECRET>
 export NGO_TOKEN_SECRET=<SECRET>
 
 EOF
+
+# set the environment variables
+source .env
 ```
+
+
 
 Before continuing, run the letsencrypt certbot and place the resulting directory in `nginx-service/docker/etc-letsencrypt/`
 
 
 # RUN
 
+```
+# build image and create a docker run command 
 make run
+
+
+```

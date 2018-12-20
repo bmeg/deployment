@@ -63,6 +63,8 @@ run: build
 	-e GRIP_SERVER=$(GRIP_SERVER) \
 	-e LETSENCRYPT_EMAIL=$(LETSENCRYPT_EMAIL) \
 	-e BASE_URL=$(BASE_URL) \
+	--log-opt max-size=10m \
+	--log-opt max-file=10 \
 	-v $(CURDIR)/docker/etc-letsencrypt:/etc/letsencrypt \
 	bmeg-nginx:latest
 
