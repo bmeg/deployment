@@ -3,5 +3,6 @@ node_modules/
 public/js/bundle.js
 public/css/main.css
 .DS_Store
-nginx-service/.env
 nginx-service/docker/etc-letsencrypt/*
+grip-service.env
+nginx-service.env

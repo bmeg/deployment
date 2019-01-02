@@ -57,9 +57,13 @@ Before continuing, setup your oauth server
 cat <<'EOF'  >>.env
 export DNS=<your-hostname.com>
 export BASE_URL=https://$DNS
+# holds resolver address, 8.8.8.8 is default for google
 export RESOLVER_ADDRESS=8.8.8.8
+# what branch to build the site from
 export BMEG_SITE_BRANCH=master
+# where to proxy /api to GRIP_SERVER/api and /grip to GRIP_SERVER/grip
 export GRIP_SERVER=<location of grip server>
+# what email address to register cert to
 export LETSENCRYPT_EMAIL=<YOUR-EMAIL>
 
 # OAUTH see NGINX-README.md for more

@@ -1,0 +1,19 @@
+version: '3'
+# use env_file to overwrite env values
+services:
+  grip-service:
+    image: bmeg/grip
+    container_name: grip-service
+    env_file:
+      - grip-service.env
+    command: grip server
+  nginx-service:
+    build: nginx-service
+    container_name: nginx-service
+    env_file:
+      - nginx-service.env
+    ports:
+      - 80:80
+      - 443:443
+    depends_on:
+      - grip-service

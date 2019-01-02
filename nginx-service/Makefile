@@ -41,39 +41,9 @@ website:
 	echo Setting base url in hugo config ..................
 	cd ~/bmeg-site && sed -i.bak 's~baseURL:.*~baseURL: $(BASE_URL)/~' config.yaml
 	cd ~/bmeg-site && make clean build
-
-
-nginx:
 	echo copying static site to nginx ..................
 	rm -rf docker/etc-nginx/public || true
 	cp -r ~/bmeg-site/public docker/etc-nginx/public
 
-build: nginx
-	echo building docker .......
-	docker build -t bmeg-nginx .
-
-run: build
-	echo docker run \
-	-d \
-	--restart unless-stopped \
-	--name bmeg-nginx \
-	-p 443:443 -p 80:80 \
-	-e DEBUG=1  \
-	-e RESOLVER_ADDRESS=$(RESOLVER_ADDRESS) \
-	-e NGO_CALLBACK_SCHEME=https \
-	-e NGO_CLIENT_ID=$(NGO_CLIENT_ID) \
-	-e NGO_CLIENT_SECRET=$(NGO_CLIENT_SECRET) \
-	-e NGO_TOKEN_SECRET=$(NGO_TOKEN_SECRET) \
-	-e GRIP_SERVER=$(GRIP_SERVER) \
-	-e LETSENCRYPT_EMAIL=$(LETSENCRYPT_EMAIL) \
-	-e BASE_URL=$(BASE_URL) \
-	--log-opt max-size=10m \
-	--log-opt max-file=10 \
-	-v $(CURDIR)/docker/etc-letsencrypt:/etc/letsencrypt \
-	bmeg-nginx:latest
-
 clean:
-	docker kill bmeg-nginx || true
-	docker rm bmeg-nginx || true
 	rm -r docker/etc-nginx/public || true
-	docker rmi bmeg-nginx || true
