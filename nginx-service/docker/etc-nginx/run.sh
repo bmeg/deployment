@@ -16,7 +16,7 @@ fi
 
 
 sed "s/%server_name%/${SERVER_NAME}/" -i /etc/nginx/sites-available/default
-sed "s/%grip_server%/${GRIP_SERVER}/" -i /etc/nginx/snippets/demo-locations.conf
+sed "s~%grip_server%~${GRIP_SERVER}~" -i /etc/nginx/snippets/demo-locations.conf
 
 if [ -z "${NGO_CLIENT_ID}" ]; then
   echo "NGO_CLIENT_ID is not set"

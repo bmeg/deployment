@@ -1,15 +1,15 @@
 version: '3'
-# use env_file to overwrite env values
 services:
   grip-service:
     image: bmeg/grip
     container_name: grip-service
-    env_file:
-      - grip-service.env
-    command: grip server
+    # defaults to 8201
+    entrypoint: ["grip", "server"]
   nginx-service:
     build: nginx-service
     container_name: nginx-service
+    # use env_file to overwrite env values
+    # see GRIP_SERVER 
     env_file:
       - nginx-service.env
     ports:
