@@ -1,19 +1,19 @@
 version: '3'
 services:
-  grip-service:
-    image: bmeg/grip
-    container_name: grip-service
-    # defaults to 8201
-    entrypoint: ["grip", "server"]
+  # grip-service:
+  #   image: bmeg/grip
+  #   container_name: grip-service
+  #   # defaults to 8201
+  #   entrypoint: ["grip", "server"]
   nginx-service:
     build: nginx-service
     container_name: nginx-service
     # use env_file to overwrite env values
-    # see GRIP_SERVER 
+    # see GRIP_SERVER
     env_file:
       - nginx-service.env
     ports:
       - 80:80
       - 443:443
-    depends_on:
-      - grip-service
+    # depends_on:
+    #   - grip-service
