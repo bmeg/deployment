@@ -38,16 +38,16 @@ local function handle_token_uris(email, token, expires)
   if uri == "/_token.json" then
     ngx.header["Content-type"] = "application/json"
     ngx.say(json.encode({
-      email   = email,
-      token   = token,
-      expires = expires,
+      OauthEmail   = email,
+      OauthAccessToken   = token,
+      OauthExpires = expires,
     }))
     ngx.exit(ngx.OK)
   end
 
   if uri == "/_token.txt" then
     ngx.header["Content-type"] = "text/plain"
-    ngx.say("email: " .. email .. "\n" .. "token: " .. token .. "\n" .. "expires: " .. expires .. "\n")
+    ngx.say("OauthEmail: " .. email .. "\n" .. "OauthAccessToken: " .. token .. "\n" .. "OauthExpires: " .. expires .. "\n")
     ngx.exit(ngx.OK)
   end
 
