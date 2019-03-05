@@ -1,21 +1,21 @@
 version: '3'
 services:
 
-  mongo:
+  mongo-service:
     image: mongo:3.6
     container_name: mongo
     volumes:
        - /mnt/disks/bmeg/mongo-data:/data/db
 
-  grip:
+  grip-service:
     image: bmeg/grip
     container_name: grip
     # defaults to 8201
     entrypoint: ["grip", "server"]
     depends_on:
-      - mongo
+      - mongo-service
 
-  nginx:
+  nginx-service:
     build: nginx-service
     container_name: nginx
     # use env_file to overwrite env values
@@ -26,13 +26,13 @@ services:
       - 80:80
       - 443:443
     volumes:
-       - ./nginx/docker/etc-letsencrypt:/etc/letsencrypt
+       - /mnt/disks/bmeg/deployment/nginx-service/docker/etc-letsencrypt:/etc/letsencrypt
     depends_on:
-      - grip
+      - grip-service
 
-  etl:
+  etl-service:
     build: etl-service
     container_name: etl
     depends_on:
-      - grip
-      - mongo
+      - grip-service
+      - mongo-service

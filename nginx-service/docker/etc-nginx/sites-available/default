@@ -24,8 +24,8 @@ server {
     lua_ssl_trusted_certificate /etc/ssl/certs/ca-certificates.crt;
     lua_ssl_verify_depth        5;
 
-    ssl_certificate /etc/letsencrypt/live/bmeg-staging.ddns.net/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/bmeg-staging.ddns.net/privkey.pem;
+    ssl_certificate /etc/letsencrypt/live/%server_name%/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/%server_name%/privkey.pem;
 
 		include /etc/nginx/sites-available/locations;
 }
