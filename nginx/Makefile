@@ -35,15 +35,16 @@ endif
 
 website:
 	echo Cloning static site ..................
-	cd ~ && rm -rf bmeg-site || true
-	cd ~ && git clone https://github.com/bmeg/bmeg-site
-	cd ~/bmeg-site && git fetch --all && git checkout $(BMEG_SITE_BRANCH)
-	echo Setting base url in hugo config ..................
-	cd ~/bmeg-site && sed -i.bak 's~baseURL:.*~baseURL: $(BASE_URL)/~' config.yaml
-	cd ~/bmeg-site && make clean build
-	echo copying static site to nginx ..................
-	rm -rf docker/etc-nginx/public || true
-	cp -r ~/bmeg-site/public docker/etc-nginx/public
+	rm -rf bmeg-site || true
+	git clone https://github.com/bmeg/bmeg-site
+	cd bmeg-site \
+	  git fetch --all ; git checkout $(BMEG_SITE_BRANCH) \
+	  echo Setting base url in hugo config .................. \
+          sed -i.bak 's~baseURL:.*~baseURL: $(BASE_URL)/~' config.yaml \
+	  docker run -v $PWD:/bmeg/bmeg-site site-builder make clean build \
+	  echo copying static site to nginx .................. \
+	  rm -rf ../docker/etc-nginx/public || true \
+	  cp -r public ../docker/etc-nginx/public 
 
 clean:
 	rm -r docker/etc-nginx/public || true
