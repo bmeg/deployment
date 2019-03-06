@@ -74,5 +74,9 @@ if [ "${DEBUG}" ]; then
   echo "## environment ##"
   env | grep '^\(NGO_.*\|LOCATIONS\|GRIP_SERVER\|RESOLVER_ADDRESS\|SERVER_NAME\)=' | sort -n | cat -n
 fi
-certbot certonly --standalone -m ${LETSENCRYPT_EMAIL} --agree-tos  -d ${SERVER_NAME} --noninteractive
+
+if [ "$SERVER_NAME" -ne "localhost"]; then
+  certbot certonly --standalone -m ${LETSENCRYPT_EMAIL} --agree-tos  -d ${SERVER_NAME} --noninteractive
+fi
+
 exec nginx -g "daemon off;" -c /etc/nginx/nginx.conf
