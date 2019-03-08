@@ -5,7 +5,7 @@ FROM python:3.7.2
 # * mounts gs://data.bmeg.io on /data.bmeg.io
 # Uses service_account_email argument and config/service_account.json
 
-ARG service_account_email
+ARG SERVICE_ACCOUNT_EMAIL
 
 # install gcsfuse
 RUN echo "deb http://packages.cloud.google.com/apt gcsfuse-jessie main" | tee /etc/apt/sources.list.d/gcsfuse.list; \
@@ -17,13 +17,14 @@ RUN curl https://sdk.cloud.google.com | bash
 ENV PATH=$PATH:/root/google-cloud-sdk/bin
 RUN gcloud config set disable_usage_reporting true
 
-# authenticate
-# COPY config /config
-# RUN gcloud auth activate-service-account \
-#  $service_account_email \
-#   --key-file=/config/service_account.json --project=bmeg-io
-VOLUME ["/config"]
 
-# mount and sleep forever
+# install mongo import
+RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 9DA31620334BD75D9DCB49F368818C72E52529D4
+RUN echo "deb http://repo.mongodb.org/apt/debian stretch/mongodb-org/4.0 main" | tee /etc/apt/sources.list.d/mongodb-org-4.0.list
+RUN apt-get update
+RUN apt-get install -y mongodb-org-tools
+
+# authenticate using SERVICE_ACCOUNT_EMAIL and /config/service_account.json,   mount and sleep forever
+VOLUME ["/config"]
 COPY docker-start.sh /docker-start.sh
 ENTRYPOINT ["/docker-start.sh"]

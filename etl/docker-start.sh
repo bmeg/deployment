@@ -2,7 +2,7 @@
 
 # authenticate
 gcloud auth activate-service-account \
-  $service_account_email \
+  $SERVICE_ACCOUNT_EMAIL\
   --key-file=/config/service_account.json --project=bmeg-io
 
 # create data dir

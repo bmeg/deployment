@@ -15,9 +15,6 @@ services:
     depends_on:
       - mongo
 
-
-
-
   nginx:
     build: nginx
     container_name: nginx
@@ -36,6 +33,14 @@ services:
   etl:
     build: etl
     container_name: etl
+    # use env_file to overwrite env values
+    # see SERVICE_ACCOUNT_EMAIL
+    env_file:
+      - etl.env    
+    volumes:
+       - /mnt/disks/bmeg/deployment/service_account.json:/config/service_account.json
+    # fuse needs privlidged mode   
+    privileged: true   
     depends_on:
       - grip
       - mongo
