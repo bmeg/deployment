@@ -10,8 +10,11 @@ services:
   grip:
     image: bmeg/grip
     container_name: grip
+    volumes:
+        - /mnt/disks/bmeg/deployment/grip_config.yml:/config/grip_config.yml
+        - /mnt/disks/bmeg/deployment/nginx/bmeg-site/static/meta/schema.json:/config/schema.json
     # defaults to 8201
-    entrypoint: ["grip", "server"]
+    entrypoint: ["grip", "server", "--config", "/config/grip_config.yml", "--schema", "/config/schema.json"]
     depends_on:
       - mongo
 
