@@ -28,7 +28,8 @@ data_path="./data/certbot"
 email="kellrott@ohsu.edu" # Adding a valid address is strongly recommended
 staging=0 # Set to 1 if you're testing your setup to avoid hitting request limits
 
-if [ -d "$data_path" ]; then
+if [ -d "$data_path/conf/live/$domains" ]; then
+  tree $data_path/conf/live/$domains
   read -p "Existing data found for $domains. Continue and replace existing certificate? (y/N) " decision
   if [ "$decision" != "Y" ] && [ "$decision" != "y" ]; then
     exit
@@ -44,6 +45,9 @@ if [ ! -e "$data_path/conf/options-ssl-nginx.conf" ] || [ ! -e "$data_path/conf/
   echo
 fi
 
+echo "### Stopping nginx ..."
+docker-compose stop nginx ; docker-compose rm -f nginx ;
+
 echo "### Creating dummy certificate for $domains ..."
 path="/etc/letsencrypt/live/$domains"
 mkdir -p "$data_path/conf/live/$domains"
@@ -56,7 +60,7 @@ echo
 
 
 echo "### Starting nginx ..."
-docker-compose up --force-recreate -d nginx
+docker-compose build nginx ;docker-compose up -d nginx
 echo
 
 echo "### Deleting dummy certificate for $domains ..."
