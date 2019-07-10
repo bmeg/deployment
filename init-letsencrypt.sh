@@ -5,10 +5,27 @@ if ! [ -x "$(command -v docker-compose)" ]; then
   exit 1
 fi
 
-domains=(bmegio.ohsu.edu)
+if ! [ "${UID}" -eq 0 ]; then
+	echo "Unfortunately - this script modifies several system files, so you have to run it as root"
+	echo "Please run $0 with sudo"
+	exit 1
+fi
+if [ -n "$2" ]; then
+	echo "This script takes only one site at once. Remove second parameter please"
+	exit 1
+fi
+if [ -z "$1" ]; then
+  echo "You need to specify site"
+  echo "Usage: $0 <site.com>"
+  exit 1
+fi
+
+
+
+domains=($1)
 rsa_key_size=4096
 data_path="./data/certbot"
-email="walsbr@ohsu.edu" # Adding a valid address is strongly recommended
+email="kellrott@ohsu.edu" # Adding a valid address is strongly recommended
 staging=0 # Set to 1 if you're testing your setup to avoid hitting request limits
 
 if [ -d "$data_path" ]; then
@@ -42,12 +59,12 @@ echo "### Starting nginx ..."
 docker-compose up --force-recreate -d nginx
 echo
 
-# echo "### Deleting dummy certificate for $domains ..."
-# docker-compose run --rm --entrypoint "\
-#   rm -Rf /etc/letsencrypt/live/$domains && \
-#   rm -Rf /etc/letsencrypt/archive/$domains && \
-#   rm -Rf /etc/letsencrypt/renewal/$domains.conf" certbot
-# echo
+echo "### Deleting dummy certificate for $domains ..."
+docker-compose run --rm --entrypoint "\
+  rm -Rf /etc/letsencrypt/live/$domains && \
+  rm -Rf /etc/letsencrypt/archive/$domains && \
+  rm -Rf /etc/letsencrypt/renewal/$domains.conf" certbot
+echo
 
 
 echo "### Requesting Let's Encrypt certificate for $domains ..."
@@ -72,9 +89,9 @@ docker-compose run --rm --entrypoint "\
     $email_arg \
     $domain_args \
     --rsa-key-size $rsa_key_size \
-    --agree-tos \
+    --agree-tos --no-eff-email \
     --force-renewal" certbot
 echo
 
 echo "### Reloading nginx ..."
-docker-compose exec nginx nginx -s reload
+docker-compose stop nginx ; docker-compose rm -f nginx ; docker-compose up -d nginx
