@@ -1,0 +1,26 @@
+# redirect to https
+server {
+	listen *:80;
+  server_name gen3-ohsu.ddns.net;
+	return 301 https://$host$request_uri;
+}
+
+server {
+  listen 443 ssl http2;
+  listen [::]:443 ssl http2;
+
+  server_name gen3-ohsu.ddns.net;
+  ssl_certificate /etc/letsencrypt/live/gen3-ohsu.ddns.net/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/gen3-ohsu.ddns.net/privkey.pem;
+
+  # content
+  location / {
+    root /usr/share/nginx/gen3-ohsu.ddns.net;
+    try_files $uri $uri/index.html $uri.html =404;
+  }
+  # for certbot challenge
+  location /.well-known/acme-challenge/ {
+      root /var/www/certbot;
+  }
+
+}
