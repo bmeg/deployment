@@ -5,16 +5,18 @@ services:
     image: mongo:3.6
     container_name: mongo
     volumes:
-       - /mnt/disks/bmeg/mongo-data:/data/db
+       - /mnt/data1/bmeg/mongo-data:/data/db
 
   grip:
     image: bmeg/grip
     container_name: grip
     volumes:
-        - /mnt/disks/bmeg/deployment/grip_config.yml:/config/grip_config.yml
-        - /mnt/disks/bmeg/deployment/nginx/bmeg-site/static/meta/schema.json:/config/schema.json
+        - ./secrets/grip_config.yml:/config/grip_config.yml
+        - ./bmeg-site/static/meta/schema.json:/config/schema.json
     # defaults to 8201
     entrypoint: ["grip", "server", "--config", "/config/grip_config.yml", "--schema", "/config/schema.json"]
+    ports:
+      - 8201:8201
     depends_on:
       - mongo
 
@@ -24,26 +26,57 @@ services:
     # use env_file to overwrite env values
     # see GRIP_SERVER
     env_file:
-      - nginx.env
+      - secrets/nginx.env
     ports:
       - 80:80
       - 443:443
     volumes:
-       - /mnt/disks/bmeg/deployment/nginx/docker/etc-letsencrypt:/etc/letsencrypt
+      # content
+      - ./bmeg-site/public:/usr/share/nginx/html
+      - ./nginx/usr/share/nginx/html:/usr/share/nginx/test-html
+      - /mnt/data2/bmeg/bmeg-etl/outputs:/usr/share/nginx/data
+
+      # config
+      - ./nginx/etc/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/etc/nginx/http.conf.d/env.conf:/etc/nginx/http.conf.d/env.conf
+      - ./nginx/etc/nginx/conf.d/default.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx/etc/nginx/protected.conf:/etc/nginx/protected.conf
+      - ./nginx/etc/nginx/lua/nginx-google-oauth/access.lua:/etc/nginx/lua/nginx-google-oauth/access.lua
+
+      # specific sites
+      - ./nginx/etc/nginx/sites-enabled/bmegio.ohsu.edu:/etc/nginx/sites-enabled/bmegio.ohsu.edu:ro
+      - ./nginx/etc/nginx/sites-enabled/bmeg.io:/etc/nginx/sites-enabled/bmeg.io:ro
+
+      # for letsencrypt
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
+
+      # startup
+      - ./nginx/run.sh:/etc/nginx/run.sh
+
     depends_on:
       - grip
 
+
+  # for letsencrypt
+  # see this if problems with renewals
+     # https://github.com/Bielecki/certbot-renew_fix/blob/master/renew-fix.sh
+  certbot:
+    image: certbot/certbot
+    volumes:
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+
+  # python & go container for loading data, running tests, etc.
   etl:
     build: etl
     container_name: etl
-    # use env_file to overwrite env values
-    # see SERVICE_ACCOUNT_EMAIL
     env_file:
-      - etl.env    
+      - secrets/etl.env
     volumes:
-       - /mnt/disks/bmeg/deployment/service_account.json:/config/service_account.json
-    # fuse needs privlidged mode   
-    privileged: true   
+      # mount bmeg-etl directory, to have access to `outputs/`
+      - /mnt/data2/bmeg/bmeg-etl:/bmeg-etl
     depends_on:
       - grip
       - mongo

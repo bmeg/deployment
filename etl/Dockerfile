@@ -2,20 +2,9 @@ FROM python:3.7.2
 
 # creates a CLI environment:
 # * python 3.7.2 environment
-# * mounts gs://data.bmeg.io on /data.bmeg.io
+# * assumes /bmeg-etl mounted
 # Uses service_account_email argument and config/service_account.json
 
-ARG SERVICE_ACCOUNT_EMAIL
-
-# install gcsfuse
-RUN echo "deb http://packages.cloud.google.com/apt gcsfuse-jessie main" | tee /etc/apt/sources.list.d/gcsfuse.list; \
-  curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - && \
-  apt-get update ; apt-get install -y apt-utils kmod && apt-get install -y gcsfuse
-
-# install google utilities, ensure they are on path
-RUN curl https://sdk.cloud.google.com | bash
-ENV PATH=$PATH:/root/google-cloud-sdk/bin
-RUN gcloud config set disable_usage_reporting true
 
 
 # install mongo import
@@ -24,7 +13,22 @@ RUN echo "deb http://repo.mongodb.org/apt/debian stretch/mongodb-org/4.0 main" |
 RUN apt-get update
 RUN apt-get install -y mongodb-org-tools
 
-# authenticate using SERVICE_ACCOUNT_EMAIL and /config/service_account.json,   mount and sleep forever
+# install go lang, silence wget and tar
+RUN wget -q  https://dl.google.com/go/go1.12.4.linux-amd64.tar.gz && \
+  tar -xf go1.12.4.linux-amd64.tar.gz
+
+# install grip
+RUN mkdir -p /go/src/github.com/bmeg
+WORKDIR /go/src/github.com/bmeg
+ENV GOPATH=/go
+ENV PATH="/go/bin:${PATH}"
+RUN git clone https://github.com/bmeg/grip
+ENV GOPROXY="https://proxy.golang.org"
+RUN cd grip && \
+  make
+
+
+
 VOLUME ["/config"]
 COPY docker-start.sh /docker-start.sh
 ENTRYPOINT ["/docker-start.sh"]

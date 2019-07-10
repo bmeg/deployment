@@ -8,3 +8,6 @@ grip.env
 nginx.env
 mongo-data
 nginx/bmeg-site
+secrets/
+data/
+bmeg-site/

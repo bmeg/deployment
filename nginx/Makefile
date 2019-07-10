@@ -43,8 +43,8 @@ website:
           sed -i.bak 's~baseURL:.*~baseURL: $(BASE_URL)/~' config.yaml \
 	  docker run -v $PWD:/bmeg/bmeg-site site-builder make clean build \
 	  echo copying static site to nginx .................. \
-	  rm -rf ../docker/etc-nginx/public || true \
-	  cp -r public ../docker/etc-nginx/public 
+	  rm -rf usr/share/nginx/html || true \
+	  cp -r public usr/share/nginx/html
 
 clean:
-	rm -r docker/etc-nginx/public || true
+	rm -r usr/share/nginx/html || true
