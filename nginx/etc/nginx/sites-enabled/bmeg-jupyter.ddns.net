@@ -34,7 +34,14 @@ server {
 			proxy_set_header Upgrade $http_upgrade;
 			proxy_set_header Connection $connection_upgrade;
 	}
-	
+  # cadvisor
+  location /cadvisor/ {
+		proxy_pass http://cadvisor:8080/;
+		proxy_redirect ~^/containers/ /cadvisor/containers/;
+		proxy_redirect ~^/docker/ /cadvisor/docker/;
+    proxy_redirect ~^/metrics/ /cadvisor/metrics/;
+	}
+
   # for certbot challenge
   location /.well-known/acme-challenge/ {
       root /var/www/certbot;

@@ -62,6 +62,7 @@ services:
     depends_on:
       - grip
       - jupyterhub
+      - cadvisor
 
 
   # for letsencrypt
@@ -122,49 +123,18 @@ services:
     command: echo
 
 
-#   # https://github.com/jupyterhub/jupyterhub-deploy-docker
-#   # jupyterhub database
-#   hub-db:
-#     image: postgres:9.5
-#     container_name: jupyterhub-db
-#     restart: always
-#     environment:
-#       POSTGRES_DB: ${POSTGRES_DB}
-#       PGDATA: ${DB_VOLUME_CONTAINER}
-#     env_file:
-#       - secrets/jupyter.env
-#     volumes:
-#       - "db:${DB_VOLUME_CONTAINER}"
-#
-#   # jupyterhub
-#   hub:
-#     depends_on:
-#       - hub-db
-#     build:
-#       context: jupyterhub
-#       args:
-#         JUPYTERHUB_VERSION: ${JUPYTERHUB_VERSION}
-#     # restart: always
-#     # image: jupyterhub
-#     container_name: jupyterhub
-#     volumes:
-#       # Bind Docker socket on the host so we can connect to the daemon from
-#       # within the container
-#       - "/var/run/docker.sock:/var/run/docker.sock:rw"
-#       # Bind Docker volume on host for JupyterHub database and cookie secrets
-#       - "data:${DATA_VOLUME_CONTAINER}"
-#       # - ./secrets/jupyterhub_config.py:/srv/jupyterhub/jupyterhub_config.py
-#     ports:
-#       - "443:443"
-#     links:
-#       - hub-db
-#     environment:
-#       POSTGRES_HOST: hub-db
-#     env_file:
-#       - secrets/jupyter.env
-#       - secrets/oauth.env
-#     command: >
-#       jupyterhub -f /srv/jupyterhub/jupyterhub_config.py
+  # see https://www.neteye-blog.com/2018/04/how-to-monitor-docker-containers-using-cadvisor-part-1/
+  cadvisor:
+    container_name: cadvisor       # The service will use this container name.
+    image: google/cadvisor:latest
+    volumes:
+    - /:/rootfs:ro
+    - /var/run:/var/run:rw
+    - /sys:/sys:ro
+    - /var/lib/docker/:/var/lib/docker:ro
+    ports:
+      - 8080:9090
+
 #
 # # docker volume create --name=jupyterhub-data
 # # docker volume create --name=jupyterhub-db-data
