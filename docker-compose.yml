@@ -81,8 +81,6 @@ services:
   etl:
     build: etl
     container_name: etl
-    env_file:
-      - secrets/etl.env
     volumes:
       # mount bmeg-etl directory, to have access to `outputs/`
       - /mnt/data2/bmeg/bmeg-etl:/bmeg-etl
@@ -96,8 +94,6 @@ services:
     container_name: jupyterhub       # The service will use this container name.
     volumes:                         # Give access to Docker socket.
       - /var/run/docker.sock:/var/run/docker.sock
-      # - ./data/certbot/conf/live/bmegio.ohsu.edu/cert.pem:/etc/letsencrypt/cert.pem
-      # - ./data/certbot/conf/live/bmegio.ohsu.edu/privkey.pem:/etc/letsencrypt/privkey.pem
       - ./secrets/userlist:/srv/jupyterhub/userlist
       - ./secrets/jupyterhub_config.py:/srv/jupyterhub/jupyterhub_config.py
       - /mnt/data1/bmeg/jupyter-data:/data
@@ -105,8 +101,6 @@ services:
       DOCKER_NOTEBOOK_IMAGE: jupyterlab_img
       DOCKER_NETWORK_NAME: deployment_default
       HUB_IP: jupyterhub
-      # SSL_KEY: /etc/letsencrypt/privkey.pem
-      # SSL_CERT: /etc/letsencrypt/cert.pem
     env_file:
       - secrets/jupyter.env
       - secrets/oauth.env
