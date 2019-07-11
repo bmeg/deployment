@@ -5,17 +5,26 @@ overview
 
 This repository contains nginx and static file setup for:
 
-* bmeg public site
-* bmeg data directory
-* secure access to grip server
+* bmeg public site  https://bmegio.ohsu.edu
+* bmeg data directory https://bmegio.ohsu.edu/data
+* secure access to grip server https://bmegio.ohsu.edu/analyze/access
 
 Additionally, we maintain nginx configurations for:
 
-* jupyterhub - for analysis
-* cadvisor - for devops statistics
-* gen3 - example arbitrary other content
+* jupyterhub - for analysis  https://bmeg-jupyter.ddns.net
+* cadvisor - for devops statistics https://bmeg-jupyter.ddns.net/cadvisor
+* gen3 - example arbitrary other content https://gen3-ohsu.ddns.net
 
 Each site (domain) is backed by a letsencrypt certbot certificate renewal process.
+
+
+deployment
+-----
+
+* databases and docker workareas live on : /mnt/data1/...
+* repositories, etl and configurations live on : /mnt/data2/...
+
+
 
 
 
