@@ -36,10 +36,15 @@ server {
 	}
   # cadvisor
   location /cadvisor/ {
-		proxy_pass http://cadvisor:8080/;
-		proxy_redirect ~^/containers/ /cadvisor/containers/;
-		proxy_redirect ~^/docker/ /cadvisor/docker/;
+    # jupyterhub-session-id
+    if ($http_cookie !~ "jupyterhub-session-id" ) {
+      return 403;
+    }
+    proxy_pass http://cadvisor:8080/;
+    proxy_redirect ~^/containers/ /cadvisor/containers/;
+    proxy_redirect ~^/docker/ /cadvisor/docker/;
     proxy_redirect ~^/metrics/ /cadvisor/metrics/;
+
 	}
 
   # for certbot challenge
