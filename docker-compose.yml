@@ -48,7 +48,9 @@ services:
       # specific sites
       - ./nginx/etc/nginx/sites-enabled/bmegio.ohsu.edu:/etc/nginx/sites-enabled/bmegio.ohsu.edu:ro
       - ./nginx/etc/nginx/sites-enabled/gen3-ohsu.ddns.net:/etc/nginx/sites-enabled/gen3-ohsu.ddns.net:ro
+      - ./nginx/etc/nginx/sites-enabled/bmeg-jupyter.ddns.net:/etc/nginx/sites-enabled/bmeg-jupyter.ddns.net:ro
       - ./nginx/etc/nginx/sites-enabled/bmeg.io:/etc/nginx/sites-enabled/bmeg.io:ro
+
 
       # for letsencrypt
       - ./data/certbot/conf:/etc/letsencrypt
@@ -59,6 +61,7 @@ services:
 
     depends_on:
       - grip
+      - jupyterhub
 
 
   # for letsencrypt
@@ -86,60 +89,92 @@ services:
       - grip
       - mongo
 
-
-  # https://github.com/jupyterhub/jupyterhub-deploy-docker
-  # jupyterhub database
-  hub-db:
-    image: postgres:9.5
-    container_name: jupyterhub-db
-    restart: always
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      PGDATA: ${DB_VOLUME_CONTAINER}
-    env_file:
-      - secrets/jupyter.env
-    volumes:
-      - "db:${DB_VOLUME_CONTAINER}"
-
-  # jupyterhub
-  hub:
-    depends_on:
-      - hub-db
-    build:
-      context: jupyterhub
-      args:
-        JUPYTERHUB_VERSION: ${JUPYTERHUB_VERSION}
-    restart: always
-    image: jupyterhub
-    container_name: jupyterhub
-    volumes:
-      # Bind Docker socket on the host so we can connect to the daemon from
-      # within the container
-      - "/var/run/docker.sock:/var/run/docker.sock:rw"
-      # Bind Docker volume on host for JupyterHub database and cookie secrets
-      - "data:${DATA_VOLUME_CONTAINER}"
+  # see https://opendreamkit.org/2018/10/17/jupyterhub-docker/
+  jupyterhub:
+    build: jupyterhub                # Build the container from this folder.
+    container_name: jupyterhub       # The service will use this container name.
+    volumes:                         # Give access to Docker socket.
+      - /var/run/docker.sock:/var/run/docker.sock
+      # - ./data/certbot/conf/live/bmegio.ohsu.edu/cert.pem:/etc/letsencrypt/cert.pem
+      # - ./data/certbot/conf/live/bmegio.ohsu.edu/privkey.pem:/etc/letsencrypt/privkey.pem
+      - ./secrets/userlist:/srv/jupyterhub/userlist
       - ./secrets/jupyterhub_config.py:/srv/jupyterhub/jupyterhub_config.py
-    ports:
-      - "443:443"
-    links:
-      - hub-db
-    environment:
-      POSTGRES_HOST: hub-db
+      - /mnt/data1/bmeg/jupyter-data:/data
+    environment:                     # Env variables passed to the Hub process.
+      DOCKER_NOTEBOOK_IMAGE: jupyterlab_img
+      DOCKER_NETWORK_NAME: deployment_default
+      HUB_IP: jupyterhub
+      # SSL_KEY: /etc/letsencrypt/privkey.pem
+      # SSL_CERT: /etc/letsencrypt/cert.pem
     env_file:
       - secrets/jupyter.env
       - secrets/oauth.env
-    command: >
-      jupyterhub -f /srv/jupyterhub/jupyterhub_config.py
+    depends_on:
+      - grip
 
-# docker volume create --name=jupyterhub-data
-# docker volume create --name=jupyterhub-db-data
-volumes:
-  data:
-    external:
-      name: ${DATA_VOLUME_HOST}
-  db:
-    external:
-      name: ${DB_VOLUME_HOST}
+  # notebook image, build via: `dc build jupyterlab`
+  # The extra line command: echo is there so that,
+  # when Docker Compose starts the service, it terminates immediately.
+  # Indeed this image is meant to be loaded by the Hub, not by Compose.
+  jupyterlab:
+    build: jupyterlab
+    image: jupyterlab_img
+    command: echo
+
+
+#   # https://github.com/jupyterhub/jupyterhub-deploy-docker
+#   # jupyterhub database
+#   hub-db:
+#     image: postgres:9.5
+#     container_name: jupyterhub-db
+#     restart: always
+#     environment:
+#       POSTGRES_DB: ${POSTGRES_DB}
+#       PGDATA: ${DB_VOLUME_CONTAINER}
+#     env_file:
+#       - secrets/jupyter.env
+#     volumes:
+#       - "db:${DB_VOLUME_CONTAINER}"
+#
+#   # jupyterhub
+#   hub:
+#     depends_on:
+#       - hub-db
+#     build:
+#       context: jupyterhub
+#       args:
+#         JUPYTERHUB_VERSION: ${JUPYTERHUB_VERSION}
+#     # restart: always
+#     # image: jupyterhub
+#     container_name: jupyterhub
+#     volumes:
+#       # Bind Docker socket on the host so we can connect to the daemon from
+#       # within the container
+#       - "/var/run/docker.sock:/var/run/docker.sock:rw"
+#       # Bind Docker volume on host for JupyterHub database and cookie secrets
+#       - "data:${DATA_VOLUME_CONTAINER}"
+#       # - ./secrets/jupyterhub_config.py:/srv/jupyterhub/jupyterhub_config.py
+#     ports:
+#       - "443:443"
+#     links:
+#       - hub-db
+#     environment:
+#       POSTGRES_HOST: hub-db
+#     env_file:
+#       - secrets/jupyter.env
+#       - secrets/oauth.env
+#     command: >
+#       jupyterhub -f /srv/jupyterhub/jupyterhub_config.py
+#
+# # docker volume create --name=jupyterhub-data
+# # docker volume create --name=jupyterhub-db-data
+# volumes:
+#   data:
+#     external:
+#       name: ${DATA_VOLUME_HOST}
+#   db:
+#     external:
+#       name: ${DB_VOLUME_HOST}
 
 # networks:
 #   default:
