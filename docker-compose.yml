@@ -1,0 +1,146 @@
+version: '3'
+services:
+
+  mongo:
+    image: mongo:3.6
+    container_name: mongo
+    volumes:
+       - /mnt/data1/bmeg/mongo-data:/data/db
+
+  grip:
+    image: bmeg/grip
+    container_name: grip
+    volumes:
+        - ./secrets/grip_config.yml:/config/grip_config.yml
+        - ./bmeg-site/static/meta/schema.json:/config/schema.json
+    # defaults to 8201
+    entrypoint: ["grip", "server", "--config", "/config/grip_config.yml", "--schema", "/config/schema.json"]
+    ports:
+      - 8201:8201
+    depends_on:
+      - mongo
+
+  nginx:
+    build: nginx
+    container_name: nginx
+    # use env_file to overwrite env values
+    # see GRIP_SERVER
+    env_file:
+      - secrets/nginx.env
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      # content
+      - ./bmeg-site/public:/usr/share/nginx/bmegio.ohsu.edu
+      - ./nginx/usr/share/nginx/default:/usr/share/nginx/default
+      - ./nginx/usr/share/nginx/gen3-ohsu.ddns.net:/usr/share/nginx/gen3-ohsu.ddns.net
+      - /mnt/data2/bmeg/bmeg-etl/outputs:/usr/share/nginx/bmegio.ohsu.edu.data
+
+      # config
+      - ./nginx/etc/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/etc/nginx/http.conf.d/env.conf:/etc/nginx/http.conf.d/env.conf
+      - ./nginx/etc/nginx/conf.d/default.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx/etc/nginx/protected.conf:/etc/nginx/protected.conf
+      - ./nginx/etc/nginx/grip.conf:/etc/nginx/grip.conf
+      - ./nginx/etc/nginx/lua/nginx-google-oauth/access.lua:/etc/nginx/lua/nginx-google-oauth/access.lua
+
+      # specific sites
+      - ./nginx/etc/nginx/sites-enabled/bmegio.ohsu.edu:/etc/nginx/sites-enabled/bmegio.ohsu.edu:ro
+      - ./nginx/etc/nginx/sites-enabled/gen3-ohsu.ddns.net:/etc/nginx/sites-enabled/gen3-ohsu.ddns.net:ro
+      - ./nginx/etc/nginx/sites-enabled/bmeg-jupyter.ddns.net:/etc/nginx/sites-enabled/bmeg-jupyter.ddns.net:ro
+      - ./nginx/etc/nginx/sites-enabled/bmeg.io:/etc/nginx/sites-enabled/bmeg.io:ro
+
+
+      # for letsencrypt
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
+
+      # startup
+      - ./nginx/run.sh:/etc/nginx/run.sh
+
+    depends_on:
+      - grip
+      - jupyterhub
+      - cadvisor
+
+
+  # for letsencrypt
+  # see this if problems with renewals
+     # https://github.com/Bielecki/certbot-renew_fix/blob/master/renew-fix.sh
+     # https://github.com/certbot/certbot/issues/2550#issuecomment-197417732
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+
+  # python & go container for loading data, running tests, etc.
+  etl:
+    build: etl
+    container_name: etl
+    volumes:
+      # mount bmeg-etl directory, to have access to `outputs/`
+      - /mnt/data2/bmeg/bmeg-etl:/bmeg-etl
+    depends_on:
+      - grip
+      - mongo
+
+  # see https://opendreamkit.org/2018/10/17/jupyterhub-docker/
+  jupyterhub:
+    build: jupyterhub                # Build the container from this folder.
+    container_name: jupyterhub       # The service will use this container name.
+    volumes:                         # Give access to Docker socket.
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./secrets/userlist:/srv/jupyterhub/userlist
+      - ./secrets/jupyterhub_config.py:/srv/jupyterhub/jupyterhub_config.py
+      - /mnt/data1/bmeg/jupyter-data:/data
+    environment:                     # Env variables passed to the Hub process.
+      DOCKER_NOTEBOOK_IMAGE: jupyterlab_img
+      DOCKER_NETWORK_NAME: deployment_default
+      HUB_IP: jupyterhub
+    env_file:
+      - secrets/jupyter.env
+      - secrets/oauth.env
+    depends_on:
+      - grip
+
+  # notebook image, build via: `dc build jupyterlab`
+  # The extra line command: echo is there so that,
+  # when Docker Compose starts the service, it terminates immediately.
+  # Indeed this image is meant to be loaded by the Hub, not by Compose.
+  jupyterlab:
+    build: jupyterlab
+    image: jupyterlab_img
+    command: echo
+
+
+  # see https://www.neteye-blog.com/2018/04/how-to-monitor-docker-containers-using-cadvisor-part-1/
+  cadvisor:
+    container_name: cadvisor       # The service will use this container name.
+    image: google/cadvisor:latest
+    volumes:
+    - /:/rootfs:ro
+    - /var/run:/var/run:rw
+    - /sys:/sys:ro
+    - /var/lib/docker/:/var/lib/docker:ro
+    ports:
+      - 8080:9090
+
+#
+# # docker volume create --name=jupyterhub-data
+# # docker volume create --name=jupyterhub-db-data
+# volumes:
+#   data:
+#     external:
+#       name: ${DATA_VOLUME_HOST}
+#   db:
+#     external:
+#       name: ${DB_VOLUME_HOST}
+
+# networks:
+#   default:
+#     external:
+#       name: ${DOCKER_NETWORK_NAME}

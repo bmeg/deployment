@@ -1,0 +1,6 @@
+Database: mongo
+
+MongoDB:
+  URL: mongo:NNNNNN
+  DBName: grip
+
