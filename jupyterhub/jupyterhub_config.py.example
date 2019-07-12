@@ -1,0 +1,81 @@
+
+# Configuration file for JupyterHub
+import os
+
+c = get_config()
+
+
+## Generic
+c.JupyterHub.admin_access = True
+# Redirect to JupyterLab, instead of the plain Jupyter notebook
+c.Spawner.default_url = '/lab'
+
+
+## Authenticator
+# Authenticate users with Google OAuth
+c.JupyterHub.authenticator_class = 'oauthenticator.GoogleOAuthenticator'
+c.GoogleOAuthenticator.oauth_callback_url = os.environ['OAUTH_CALLBACK_URL']
+c.GoogleOAuthenticator.client_id = os.environ['GOOGLE_CLIENT_ID']
+c.GoogleOAuthenticator.client_secret = os.environ['GOOGLE_CLIENT_SECRET']
+# By default, any domain is allowed to login but you can restrict authorized domains with a list (recommended):
+#c.GoogleOAuthenticator.hosted_domain = ["bmegio.ohsu.edu"]
+# display on Sign in button
+c.GoogleOAuthenticator.login_service = "your google account."
+
+
+
+## Docker spawner
+c.JupyterHub.spawner_class = 'dockerspawner.DockerSpawner'
+# For debugging arguments passed to spawned containers
+c.DockerSpawner.debug = True
+c.DockerSpawner.image = os.environ['DOCKER_NOTEBOOK_IMAGE']
+c.DockerSpawner.network_name = os.environ['DOCKER_NETWORK_NAME']
+
+c.DockerSpawner.extra_host_config.update({
+  "extra_hosts": {
+    "bmegio.ohsu.edu":"10.95.46.20"
+  }
+})
+
+
+# See https://github.com/jupyterhub/dockerspawner/blob/master/examples/oauth/jupyterhub_config.py
+c.JupyterHub.hub_ip = os.environ['HUB_IP']
+
+# user data persistence
+# see https://github.com/jupyterhub/dockerspawner#data-persistence-and-dockerspawner
+notebook_dir = os.environ.get('DOCKER_NOTEBOOK_DIR') or '/home/jovyan'
+c.DockerSpawner.notebook_dir = notebook_dir
+c.DockerSpawner.volumes = { 'jupyterhub-user-{username}': notebook_dir }
+
+# Other stuff
+c.Spawner.cpu_limit = 1
+c.Spawner.mem_limit = '10G'
+
+## Services
+# stop the single-user servers after a certain amount of idle time ( 5 days )
+# https://github.com/jupyterhub/jupyterhub/blob/master/examples/cull-idle
+c.JupyterHub.services = [
+    {
+        'name': 'cull_idle',
+        'admin': True,
+        'command': 'python /srv/jupyterhub/cull_idle_servers.py --timeout=432000'.split(),
+    },
+]
+
+
+# Whitlelist users and admins
+c.Authenticator.whitelist = whitelist = set()
+c.Authenticator.admin_users = admin = set()
+c.JupyterHub.admin_access = True
+pwd = os.path.dirname(__file__)
+with open(os.path.join(pwd, 'userlist')) as f:
+    for line in f:
+        if not line:
+            continue
+        parts = line.split()
+        # in case of newline at the end of userlist file
+        if len(parts) >= 1:
+            name = parts[0]
+            whitelist.add(name)
+            if len(parts) > 1 and parts[1] == 'admin':
+                admin.add(name)
