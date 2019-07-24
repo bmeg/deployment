@@ -17,6 +17,7 @@ services:
     entrypoint: ["grip", "server", "--config", "/config/grip_config.yml", "--schema", "/config/schema.json"]
     ports:
       - 8201:8201
+      - 8202:8202
     depends_on:
       - mongo
 
