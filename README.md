@@ -149,6 +149,44 @@ data                    // letsencrypt data
     └── www
 ```
 
+#### creating a new host
+
+To create a new host, in this example `bmeg.io`
+
+First, point the DNS at this host.  Once that is verified, ask letsencrypt for new certs.
+```
+sudo  ./init-letsencrypt.sh  bmeg.io
+```
+This should respond with a "congratulations" message.
+
+
+#### updating the bmeg.io website
+
+bash convenience
+```
+#  stop, rebuild, start and montitor
+alias dc='docker-compose '
+rs() {
+  dc stop $1; dc rm -f $1; dc build $1; dc up -d $1; dc logs -f $1
+}
+```
+
+```
+# in the nginx dir, build the new site.
+cd nginx/
+export SERVER_NAME=bmeg.io
+export BASE_URL=https://bmeg.io
+export BMEG_SITE_BRANCH=master
+sudo rm -rf bmeg-site
+./makesite.sh
+
+# restart nginx
+cd ..
+rs nginx
+
+```
+
+
 ### mongo
 Plain vanilla mongo installation.  Data maintained on `/mnt/data1/bmeg/mongo-data`
 
