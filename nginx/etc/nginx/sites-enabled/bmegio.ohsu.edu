@@ -1,4 +1,3 @@
-lua_package_path '/etc/nginx/lua/?.lua;';
 
 # redirect to https
 server {

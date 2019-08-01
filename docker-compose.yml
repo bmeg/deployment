@@ -33,10 +33,12 @@ services:
       - 443:443
     volumes:
       # content
-      - ./bmeg-site/public:/usr/share/nginx/bmegio.ohsu.edu
+      - ./nginx/bmeg-site/public:/usr/share/nginx/bmegio.ohsu.edu
+      - ./nginx/bmeg-site/public:/usr/share/nginx/bmeg.io
       - ./nginx/usr/share/nginx/default:/usr/share/nginx/default
       - ./nginx/usr/share/nginx/gen3-ohsu.ddns.net:/usr/share/nginx/gen3-ohsu.ddns.net
       - /mnt/data2/bmeg/bmeg-etl/outputs:/usr/share/nginx/bmegio.ohsu.edu.data
+      - /mnt/data2/bmeg/bmeg-etl/outputs:/usr/share/nginx/bmeg.io.data
 
       # config
       - ./nginx/etc/nginx/nginx.conf:/etc/nginx/nginx.conf

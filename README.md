@@ -5,9 +5,9 @@ overview
 
 This repository contains nginx and static file setup for:
 
-* bmeg public site  https://bmegio.ohsu.edu
-* bmeg data directory https://bmegio.ohsu.edu/data
-* secure access to grip server https://bmegio.ohsu.edu/analyze/access
+* bmeg public site  https://bmeg.io
+* bmeg data directory https://bmeg.io/bmeg-data
+* secure access to grip server https://bmeg.io/analyze/access
 
 Additionally, we maintain nginx configurations for:
 
@@ -78,12 +78,13 @@ The nginx service leverages two key technologies:
 
 Each site has a file in etc/nginx/sites-enabled.  Ensure that the site is included in etc/nginx/
 
-Content is mapped to `usr/share/nginx/...`.  The `bmeg-etl/outputs` directory is mounted to /usr/share/nginx/bmegio.ohsu.edu.data
+Content is mapped to `usr/share/nginx/...`.  The `bmeg-etl/outputs` directory is mounted to /usr/share/nginx/bmeg.io.data
 
-The bmeg-site hugo single page app is generated into `nginx/bmeg-site/public` and mounted to /usr/share/nginx/bmegio.ohsu.edu.
+The bmeg-site hugo single page app is generated into `nginx/bmeg-site/public` and mounted to /usr/share/nginx/bmeg.io
+
+The `makesite.sh` script sets the base site in the hugo config and runs the docker image `site-builder`
 
 ```
-├── Makefile
 ├── makesite.sh
 ├── site-builder
 │   └── Dockerfile
@@ -148,6 +149,44 @@ data                    // letsencrypt data
     │   └── ssl-dhparams.pem
     └── www
 ```
+
+#### creating a new host
+
+To create a new host, in this example `bmeg.io`
+
+First, point the DNS at this host.  Once that is verified, ask letsencrypt for new certs.
+```
+sudo  ./init-letsencrypt.sh  bmeg.io
+```
+This should respond with a "congratulations" message.
+
+
+#### updating the bmeg.io website
+
+bash convenience
+```
+#  stop, rebuild, start and montitor
+alias dc='docker-compose '
+rs() {
+  dc stop $1; dc rm -f $1; dc build $1; dc up -d $1; dc logs -f $1
+}
+```
+
+```
+# in the nginx dir, build the new site.
+cd nginx/
+export SERVER_NAME=bmeg.io
+export BASE_URL=https://bmeg.io
+export BMEG_SITE_BRANCH=master
+sudo rm -rf bmeg-site
+./makesite.sh
+
+# restart nginx
+cd ..
+rs nginx
+
+```
+
 
 ### mongo
 Plain vanilla mongo installation.  Data maintained on `/mnt/data1/bmeg/mongo-data`
