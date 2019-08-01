@@ -5,9 +5,9 @@ overview
 
 This repository contains nginx and static file setup for:
 
-* bmeg public site  https://bmegio.ohsu.edu
-* bmeg data directory https://bmegio.ohsu.edu/data
-* secure access to grip server https://bmegio.ohsu.edu/analyze/access
+* bmeg public site  https://bmeg.io
+* bmeg data directory https://bmeg.io/bmeg-data
+* secure access to grip server https://bmeg.io/analyze/access
 
 Additionally, we maintain nginx configurations for:
 
@@ -78,12 +78,13 @@ The nginx service leverages two key technologies:
 
 Each site has a file in etc/nginx/sites-enabled.  Ensure that the site is included in etc/nginx/
 
-Content is mapped to `usr/share/nginx/...`.  The `bmeg-etl/outputs` directory is mounted to /usr/share/nginx/bmegio.ohsu.edu.data
+Content is mapped to `usr/share/nginx/...`.  The `bmeg-etl/outputs` directory is mounted to /usr/share/nginx/bmeg.io.data
 
-The bmeg-site hugo single page app is generated into `nginx/bmeg-site/public` and mounted to /usr/share/nginx/bmegio.ohsu.edu.
+The bmeg-site hugo single page app is generated into `nginx/bmeg-site/public` and mounted to /usr/share/nginx/bmeg.io
+
+The `makesite.sh` script sets the base site in the hugo config and runs the docker image `site-builder`
 
 ```
-├── Makefile
 ├── makesite.sh
 ├── site-builder
 │   └── Dockerfile
