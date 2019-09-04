@@ -20,7 +20,7 @@ server {
     try_files $uri $uri/index.html $uri.html =404;
   }
   # data
-  location /bmeg-data {
+  location /data {
     alias /usr/share/nginx/bmeg.io.data/; # directory to list
     autoindex on;
   }
