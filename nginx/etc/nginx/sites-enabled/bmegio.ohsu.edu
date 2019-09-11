@@ -33,6 +33,6 @@ server {
   # oath setup
 	# grip protected paths
 	##
-	include /etc/nginx/grip.conf;
+	include /etc/nginx/grip-bmegio.ohsu.edu.conf;
 
 }
