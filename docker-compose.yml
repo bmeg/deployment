@@ -87,7 +87,10 @@ services:
     container_name: etl
     volumes:
       # mount bmeg-etl directory, to have access to `outputs/`
-      - /mnt/data2/bmeg/bmeg-etl:/bmeg-etl
+      - /mnt/data2/bmeg/bmeg-data/rc3/bmeg_file_manifest.txt:/etl/bmeg_file_manifest.txt
+      # mount the desired release
+      - /mnt/data2/bmeg/bmeg-data/rc3:/etl/outputs
+      - /mnt/data2/bmeg/bmeg-etl:/etl/bmeg-etl
     depends_on:
       - grip
       - mongo
