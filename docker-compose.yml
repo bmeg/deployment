@@ -34,9 +34,8 @@ services:
       - 443:443
     volumes:
       # content
-      - ./nginx/bmeg-site/public:/usr/share/nginx/bmegio.ohsu.edu
-      - ./nginx/bmeg-site/public:/usr/share/nginx/bmeg.io
-      - ./nginx/usr/share/nginx/default:/usr/share/nginx/default
+      - ./nginx/bmeg-site/bmegio.ohsu.edu/public:/usr/share/nginx/bmegio.ohsu.edu
+      - ./nginx/bmeg-site/bmeg.io/public:/usr/share/nginx/bmeg.io
       - ./nginx/usr/share/nginx/gen3-ohsu.ddns.net:/usr/share/nginx/gen3-ohsu.ddns.net
       - /mnt/data2/bmeg/bmeg-data:/usr/share/nginx/bmegio.ohsu.edu.data
       - /mnt/data2/bmeg/bmeg-data:/usr/share/nginx/bmeg.io.data
@@ -46,7 +45,8 @@ services:
       - ./nginx/etc/nginx/http.conf.d/env.conf:/etc/nginx/http.conf.d/env.conf
       - ./nginx/etc/nginx/conf.d/default.conf:/etc/nginx/conf.d/default.conf
       - ./nginx/etc/nginx/protected.conf:/etc/nginx/protected.conf
-      - ./nginx/etc/nginx/grip.conf:/etc/nginx/grip.conf
+      - ./nginx/etc/nginx/grip-bmeg.io.conf:/etc/nginx/grip-bmeg.io.conf
+      - ./nginx/etc/nginx/grip-bmegio.ohsu.edu.conf:/etc/nginx/grip-bmegio.ohsu.edu.conf
       - ./nginx/etc/nginx/lua/nginx-google-oauth/access.lua:/etc/nginx/lua/nginx-google-oauth/access.lua
 
       # specific sites

@@ -39,7 +39,7 @@ server {
 	}
   # cadvisor - unauthorized unless a jupyterhub-session-id exists
   location /cadvisor/ {
-    if ($http_cookie !~ "jupyterhub-session-id" ) {
+    if ($http_cookie !~ "_xsrf" ) {
       return 403;
     }
     proxy_pass http://cadvisor:8080/;
