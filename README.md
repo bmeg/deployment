@@ -78,9 +78,9 @@ The nginx service leverages two key technologies:
 
 Each site has a file in etc/nginx/sites-enabled.  Ensure that the site is included in etc/nginx/
 
-Content is mapped to `usr/share/nginx/...`.  The `bmeg-etl/outputs` directory is mounted to /usr/share/nginx/bmeg.io.data
+Content is mapped to `usr/share/nginx/...`.  The `bmeg-data/` directory is mounted to /usr/share/nginx/bmeg.io.data
 
-The bmeg-site hugo single page app is generated into `nginx/bmeg-site/public` and mounted to /usr/share/nginx/bmeg.io
+The bmeg-site hugo single page app is generated into `nginx/bmeg-site/bmeg.io/public` and mounted to /usr/share/nginx/bmeg.io
 
 The `makesite.sh` script sets the base site in the hugo config and runs the docker image `site-builder`
 
@@ -93,12 +93,10 @@ The `makesite.sh` script sets the base site in the hugo config and runs the dock
 To update the content:
 ```
 DEPLOYMENT_DIR=/mnt/data2/bmeg/deployment
-NGINX_DIR=nginx-open
 cd $DEPLOYMENT_DIR
 dc='docker-compose'
 
-cd $NGINX_DIR
-sudo rm -rf bmeg-site
+cd nginx
 ./makesite.sh
 cd ..
 $dc build nginx
@@ -178,7 +176,6 @@ cd nginx/
 export SERVER_NAME=bmeg.io
 export BASE_URL=https://bmeg.io
 export BMEG_SITE_BRANCH=master
-sudo rm -rf bmeg-site
 ./makesite.sh
 
 # restart nginx

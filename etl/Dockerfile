@@ -5,8 +5,6 @@ FROM python:3.7.2
 # * assumes /bmeg-etl mounted
 # Uses service_account_email argument and config/service_account.json
 
-
-
 # install mongo import
 RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 9DA31620334BD75D9DCB49F368818C72E52529D4
 RUN echo "deb http://repo.mongodb.org/apt/debian stretch/mongodb-org/4.0 main" | tee /etc/apt/sources.list.d/mongodb-org-4.0.list
@@ -27,8 +25,7 @@ ENV GOPROXY="https://proxy.golang.org"
 RUN cd grip && \
   make
 
-
-
-VOLUME ["/config"]
 COPY docker-start.sh /docker-start.sh
+COPY load_database.sh /etl/load_database.sh
+WORKDIR /etl
 ENTRYPOINT ["/docker-start.sh"]
