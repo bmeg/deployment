@@ -7,7 +7,7 @@ docker build -t site-builder .
 cd ..
 # build it
 echo Cloning static site ..................
-rm -rf bmeg-site/$SERVER_NAME/* || true
+rm -rf bmeg-site/$SERVER_NAME || true
 git clone https://github.com/bmeg/bmeg-site bmeg-site/$SERVER_NAME
 chmod -R +rw bmeg-site/$SERVER_NAME
 chgrp -R sudo bmeg-site/$SERVER_NAME
