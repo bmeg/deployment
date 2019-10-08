@@ -1,11 +1,17 @@
+#!/bin/bash
+
+set -e
+
 # get the configuration and export it
-source  ../secrets/nginx.env ; export $(cut -d= -f1 ../secrets/nginx.env) ;
+if [ -z "$BMEG_SITE_BRANCH" ] || [ -z "$SERVER_NAME" ] || [ -z "$BASE_URL" ]; then
+    source ../secrets/nginx.env;
+fi
 echo Building bmeg site branch=$BMEG_SITE_BRANCH for server $SERVER_NAME
 # ensure the docker image that does the build is up to date
 cd site-builder
 docker build -t site-builder .
 cd ..
-#build it
+# build it
 echo Cloning static site ..................
 rm -rf bmeg-site/$SERVER_NAME || true
 git clone https://github.com/bmeg/bmeg-site bmeg-site/$SERVER_NAME

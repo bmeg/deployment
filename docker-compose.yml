@@ -13,9 +13,7 @@ services:
     container_name: grip
     volumes:
         - ./secrets/grip_config.yml:/config/grip_config.yml
-        - ./bmeg-site/static/meta/schema.json:/config/schema.json
-    # defaults to 8201
-    entrypoint: ["grip", "server", "--config", "/config/grip_config.yml", "--schema", "/config/schema.json"]
+    entrypoint: ["grip", "server", "--config", "/config/grip_config.yml"]
     ports:
       - 8201:8201
       - 8202:8202
@@ -87,7 +85,9 @@ services:
     container_name: etl
     volumes:
       # mount bmeg-etl directory, to have access to `outputs/`
-      - /mnt/data2/bmeg/bmeg-etl:/bmeg-etl
+      - /mnt/data2/bmeg/bmeg-data/:/etl/bmeg-data
+      # mount bmeg-etl 
+      - /mnt/data2/bmeg/bmeg-etl:/etl/bmeg-etl
     depends_on:
       - grip
       - mongo
