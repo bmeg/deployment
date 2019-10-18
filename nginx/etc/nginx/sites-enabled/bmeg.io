@@ -24,6 +24,11 @@ server {
     alias /usr/share/nginx/bmeg.io.data/; # directory to list
     autoindex on;
   }
+  # share
+  location /share {
+    alias /usr/share/nginx/bmeg.io.share/; # directory to list
+    autoindex on;
+  }
   # for certbot challenge
   location /.well-known/acme-challenge/ {
       root /var/www/certbot;

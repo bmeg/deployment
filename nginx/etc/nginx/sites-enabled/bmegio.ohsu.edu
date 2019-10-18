@@ -24,6 +24,11 @@ server {
     alias /usr/share/nginx/bmegio.ohsu.edu.data/; # directory to list
     autoindex on;
   }
+  # share
+  location /share {
+    alias /usr/share/nginx/bmegio.ohsu.edu.share/; # directory to list
+    autoindex on;
+  }
   # for certbot challenge
   location /.well-known/acme-challenge/ {
       root /var/www/certbot;

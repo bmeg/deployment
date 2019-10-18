@@ -37,6 +37,8 @@ services:
       - ./nginx/usr/share/nginx/gen3-ohsu.ddns.net:/usr/share/nginx/gen3-ohsu.ddns.net
       - /mnt/data2/bmeg/bmeg-data:/usr/share/nginx/bmegio.ohsu.edu.data
       - /mnt/data2/bmeg/bmeg-data:/usr/share/nginx/bmeg.io.data
+      - /mnt/data2/bmeg/bmeg-share:/usr/share/nginx/bmegio.ohsu.edu.share
+      - /mnt/data2/bmeg/bmeg-share:/usr/share/nginx/bmeg.io.share
 
       # config
       - ./nginx/etc/nginx/nginx.conf:/etc/nginx/nginx.conf
