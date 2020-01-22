@@ -8,6 +8,8 @@ This repository contains nginx and static file setup for:
 * bmeg public site  https://bmeg.io
 * bmeg data directory https://bmeg.io/bmeg-data
 * secure access to grip server https://bmeg.io/analyze/access
+* secure access to recount.bio data https://recount.bio
+
 
 Additionally, we maintain nginx configurations for:
 
