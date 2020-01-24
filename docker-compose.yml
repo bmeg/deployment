@@ -8,8 +8,8 @@ services:
        - /mnt/data1/bmeg/mongo-data:/data/db
 
   grip:
-    # image: bmeg/grip
-    build: grip
+    image: bmeg/grip
+    # build: grip
     container_name: grip
     volumes:
         - ./secrets/grip_config.yml:/config/grip_config.yml
@@ -39,6 +39,8 @@ services:
       - /mnt/data2/bmeg/bmeg-data:/usr/share/nginx/bmeg.io.data
       - /mnt/data2/bmeg/bmeg-share:/usr/share/nginx/bmegio.ohsu.edu.share
       - /mnt/data2/bmeg/bmeg-share:/usr/share/nginx/bmeg.io.share
+      - /mnt/data2/recount/data:/usr/share/nginx/recount.bio.data
+      - ./nginx/usr/share/nginx/recount.bio:/usr/share/nginx/recount.bio
 
       # config
       - ./nginx/etc/nginx/nginx.conf:/etc/nginx/nginx.conf
@@ -54,6 +56,7 @@ services:
       - ./nginx/etc/nginx/sites-enabled/gen3-ohsu.ddns.net:/etc/nginx/sites-enabled/gen3-ohsu.ddns.net:ro
       - ./nginx/etc/nginx/sites-enabled/bmeg-jupyter.ddns.net:/etc/nginx/sites-enabled/bmeg-jupyter.ddns.net:ro
       - ./nginx/etc/nginx/sites-enabled/bmeg.io:/etc/nginx/sites-enabled/bmeg.io:ro
+      - ./nginx/etc/nginx/sites-enabled/recount.bio:/etc/nginx/sites-enabled/recount.bio:ro
 
 
       # for letsencrypt
@@ -88,7 +91,7 @@ services:
     volumes:
       # mount bmeg-etl directory, to have access to `outputs/`
       - /mnt/data2/bmeg/bmeg-data/:/etl/bmeg-data
-      # mount bmeg-etl 
+      # mount bmeg-etl
       - /mnt/data2/bmeg/bmeg-etl:/etl/bmeg-etl
     depends_on:
       - grip
