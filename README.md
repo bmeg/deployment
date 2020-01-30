@@ -250,3 +250,13 @@ Notes:
 * you need to log into jupyterhub before accessing
 
 <img src="https://user-images.githubusercontent.com/47808/61067786-41d2ef00-a3bd-11e9-9ded-5d611dcb691c.png" alt="drawing" width="200"/>
+
+#### sync
+
+Notes: to sync from internal services -
+
+This crontab will sync daily at 00:00
+
+```
+0 0 * * * rsync --checksum  <source-directory>/*.*  <user@host>:<target-directory>
+```
