@@ -11,3 +11,4 @@ nginx/bmeg-site
 secrets/
 data/
 bmeg-site/
+compose-services/

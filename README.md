@@ -250,3 +250,18 @@ Notes:
 * you need to log into jupyterhub before accessing
 
 <img src="https://user-images.githubusercontent.com/47808/61067786-41d2ef00-a3bd-11e9-9ded-5d611dcb691c.png" alt="drawing" width="200"/>
+
+
+#### gen3 compose-services
+
+* setup
+
+```
+# see bmegio-test.ddns.net
+cd ~/deployment
+git status
+# On branch bmegio-test.ddns.net
+git clone git@github.com:ohsu-comp-bio/compose-services.git
+checkout compose-services
+git checkout bmegio-test.ddns.net
+```
