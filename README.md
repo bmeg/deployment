@@ -96,7 +96,7 @@ To update the content:
 ```
 DEPLOYMENT_DIR=/mnt/data2/bmeg/deployment
 cd $DEPLOYMENT_DIR
-dc='docker-compose'
+alias dc='docker-compose -f docker-compose.yml -f compose-services/docker-compose.yml  -f compose-services/onprem/docker-compose.yml'
 
 cd nginx
 ./makesite.sh
@@ -257,11 +257,96 @@ Notes:
 * setup
 
 ```
-# see bmegio-test.ddns.net
-cd ~/deployment
+# see commons.bmeg.io
+cd xxx/deployment
 git status
-# On branch bmegio-test.ddns.net
+# On branch commons.bmeg.io
 git clone git@github.com:ohsu-comp-bio/compose-services.git
 checkout compose-services
-git checkout bmegio-test.ddns.net
+git checkout commons.bmeg.io
+cd ..
+
+alias dc='docker-compose -f docker-compose.yml -f compose-services/docker-compose.yml  -f compose-services/onprem/docker-compose.yml'
+
+
+# build local services
+
+cd compose-services/onprem/
+make
+
+>>>
+$ docker images | grep onprem
+onprem/tube                     latest              b455e7513b9f        9 minutes ago       2.11GB
+onprem/data-portal              latest              552a3d09ca9c        11 minutes ago      1.22GB
+onprem/hatchery                 latest              b88a0a5e39da        15 minutes ago      954MB
+onprem/s3indexer                latest              1bde3a35f4cf        16 minutes ago      1.16GB
+onprem/indexs3client            latest              4658ee3c14dc        17 minutes ago      10.5MB
+onprem/fence                    latest              857b63840d4a        18 minutes ago      670MB
+
+
+# customize gen3 secrets
+
+cd Secrets
+grep commons.bmeg.io  *.*
+fence-config.yaml:BASE_URL: 'https://commons.bmeg.io/user'
+peregrine_creds.json:  "hostname": "commons.bmeg.io"
+sheepdog_creds.json:  "hostname": "commons.bmeg.io",
+
+
+cd ..
+
+# prep for elastic
+sysctl -w vm.max_map_count=262144
+
+# install yp needed by creds_setup.sh
+# see https://mikefarah.gitbook.io/yq/#on-ubuntu-16-04-or-higher-from-debian-package
+
+
+
+# generate local certs
+$ bash ./creds_setup.sh  commons.bmeg.io
+
+>>>
+The Subject's Distinguished Name is as follows
+...
+commonName            :ASN.1 12:'<hostname>'
+...
+Write out database with 1 new entries
+Data Base Updated
+
+
+# configure keys
+check `Secrets/fenceJwtKeys/<now() timestamp>/`  fence will use most recent timestamp
+
+# copy fence's public key to elastic  Secrets/elasticsearch-open-distro/config.yml
+# see jwt_auth_domain/signing_key  
+# see voucher-service in compose-services/onprem/docker-compose.yml
+
+update compose-services/Secrets/.env
+
+# slow start order (use this if you are having problems), otherwise skip to next
+
+dc up -d postgres
+dc up -d fence-service
+dc up -d arborist-service
+dc exec fence-service fence-create migrate
+dc exec fence-service fence-create sync --arborist http://arborist-service --yaml user.yaml
+
+
+# bring up gen3
+
+dc up -d
+
+# apply security config to elastic
+### note: compare against top of elastic log file
+
+dc exec esproxy-service \
+"/usr/share/elasticsearch/plugins/opendistro_security/tools/securityadmin.sh" -cd "/usr/share/elasticsearch/plugins/opendistro_security/securityconfig" -icl -key "/usr/share/elasticsearch/config/kirk-key.pem" -cert "/usr/share/elasticsearch/config/kirk.pem" -cacert "/usr/share/elasticsearch/config/root-ca.pem" -nhnv
+
+### should produce
+
+>>>
+...
+Done with success
+
 ```

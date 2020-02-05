@@ -59,10 +59,10 @@ services:
       - ./nginx/etc/nginx/sites-enabled/recount.bio:/etc/nginx/sites-enabled/recount.bio:ro
 
       # testing
-      - ./nginx/etc/nginx/sites-enabled/bmeg-gen3.ddns.net:/etc/nginx/sites-enabled/bmeg-gen3.ddns.net:ro
-      - ./nginx/etc/nginx/sites-enabled/bmegio-test.ddns.net:/etc/nginx/sites-enabled/bmegio-test.ddns.net:ro
-      - ./nginx/bmeg-site/bmegio-test.ddns.net/public:/usr/share/nginx/bmegio-test.ddns.net
-      - ./nginx/etc/nginx/grip-bmegio-test.ddns.net.conf:/etc/nginx/grip-bmegio-test.ddns.net.conf
+      - ./nginx/etc/nginx/sites-enabled/commons.bmeg.io:/etc/nginx/sites-enabled/commons.bmeg.io:ro
+      # - ./nginx/etc/nginx/sites-enabled/bmegio-test.ddns.net:/etc/nginx/sites-enabled/bmegio-test.ddns.net:ro
+      # - ./nginx/bmeg-site/bmegio-test.ddns.net/public:/usr/share/nginx/bmegio-test.ddns.net
+      # - ./nginx/etc/nginx/grip-bmegio-test.ddns.net.conf:/etc/nginx/grip-bmegio-test.ddns.net.conf
 
       # for letsencrypt
       - ./data/certbot/conf:/etc/letsencrypt
@@ -78,9 +78,6 @@ services:
 
 
   # for letsencrypt
-  # see this if problems with renewals
-     # https://github.com/Bielecki/certbot-renew_fix/blob/master/renew-fix.sh
-     # https://github.com/certbot/certbot/issues/2550#issuecomment-197417732
   certbot:
     image: certbot/certbot
     container_name: certbot
