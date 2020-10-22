@@ -33,6 +33,10 @@ server {
   location /.well-known/acme-challenge/ {
       root /var/www/certbot;
   }
+  # for bmeg-dash
+  location /app {
+      proxy_pass http://bmeg-dash:8050;
+  }
 
 	##
   # oath setup
