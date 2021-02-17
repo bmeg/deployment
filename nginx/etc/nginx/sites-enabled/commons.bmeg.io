@@ -237,7 +237,7 @@ server {
 	  proxy_pass_header  REMOTE_USER;
 	  proxy_pass_header  REMOTE_ROLES;
 	  rewrite ^/tmp/(.*)$ /$1 break;
-	  proxy_pass http://tmp-service:3838/;
+	  # proxy_pass http://tmp-service:3838/;
 
 		# websocket headers
 		proxy_set_header Upgrade $http_upgrade;
