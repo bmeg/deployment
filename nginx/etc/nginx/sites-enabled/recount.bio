@@ -1,7 +1,7 @@
 # redirect to https
 server {
 	listen *:80;
-  server_name recount.bio;
+  	server_name recount.bio;
 	return 302 https://$host$request_uri;
 }
 
@@ -12,6 +12,9 @@ server {
   server_name recount.bio;
   ssl_certificate /etc/letsencrypt/live/recount.bio/fullchain.pem;
   ssl_certificate_key /etc/letsencrypt/live/recount.bio/privkey.pem;
+
+  ssl_protocols TLSv1.2;
+  add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
 
   # content
   location / {

@@ -10,9 +10,13 @@ server {
   listen 443 ssl http2;
   listen [::]:443 ssl http2;
 
+
   server_name bmeg.io;
   ssl_certificate /etc/letsencrypt/live/bmeg.io/fullchain.pem;
   ssl_certificate_key /etc/letsencrypt/live/bmeg.io/privkey.pem;
+
+  ssl_protocols TLSv1.2;
+  add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
 
   # content
   location / {
