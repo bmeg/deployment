@@ -57,6 +57,7 @@ services:
       - ./nginx/etc/nginx/sites-enabled/bmeg-jupyter.ddns.net:/etc/nginx/sites-enabled/bmeg-jupyter.ddns.net:ro
       - ./nginx/etc/nginx/sites-enabled/bmeg.io:/etc/nginx/sites-enabled/bmeg.io:ro
       - ./nginx/etc/nginx/sites-enabled/recount.bio:/etc/nginx/sites-enabled/recount.bio:ro
+      - ./nginx/etc/nginx/sites-enabled/methylation.recount.bio:/etc/nginx/sites-enabled/methylation.recount.bio:ro
 
       # testing
       - ./nginx/etc/nginx/sites-enabled/commons.bmeg.io:/etc/nginx/sites-enabled/commons.bmeg.io:ro
