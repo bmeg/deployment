@@ -3,12 +3,14 @@ services:
 
   mongo:
     image: mongo:3.6
+    restart: unless-stopped    
     container_name: mongo
     volumes:
        - /mnt/data1/bmeg/mongo-data:/data/db
 
   grip:
     image: bmeg/grip
+    restart: unless-stopped    
     # build: grip
     container_name: grip
     volumes:
@@ -22,6 +24,7 @@ services:
 
   nginx:
     build: nginx
+    restart: unless-stopped    
     container_name: nginx
     # use env_file to overwrite env values
     # see GRIP_SERVER
@@ -81,6 +84,7 @@ services:
   # for letsencrypt
   certbot:
     image: certbot/certbot
+    restart: unless-stopped    
     container_name: certbot
     volumes:
       - ./data/certbot/conf:/etc/letsencrypt
@@ -90,6 +94,7 @@ services:
   # python & go container for loading data, running tests, etc.
   etl:
     build: etl
+    restart: unless-stopped    
     container_name: etl
     volumes:
       # mount bmeg-etl directory, to have access to `outputs/`
@@ -103,6 +108,7 @@ services:
   # see https://opendreamkit.org/2018/10/17/jupyterhub-docker/
   jupyterhub:
     build: jupyterhub                # Build the container from this folder.
+    restart: unless-stopped    
     container_name: jupyterhub       # The service will use this container name.
     volumes:                         # Give access to Docker socket.
       - /var/run/docker.sock:/var/run/docker.sock
@@ -126,6 +132,7 @@ services:
   jupyterlab:
     build: jupyterlab
     image: jupyterlab_img
+    restart: unless-stopped    
     command: echo
 
 
@@ -133,6 +140,7 @@ services:
   cadvisor:
     container_name: cadvisor       # The service will use this container name.
     image: google/cadvisor:latest
+    restart: unless-stopped    
     volumes:
     - /:/rootfs:ro
     - /var/run:/var/run:rw
