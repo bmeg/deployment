@@ -9,7 +9,7 @@ services:
        - /mnt/data1/bmeg/mongo-data:/data/db
 
   grip:
-    image: bmeg/grip:0.7.0
+    image: bmeg/grip:0.7.1
     restart: unless-stopped    
     # build: grip
     container_name: grip
