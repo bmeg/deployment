@@ -222,29 +222,6 @@ server {
       proxy_cache_bypass $http_upgrade;
     }
 	##
-	# for TMP shiny app
-	##
-	# uses existing authz
-	location /tmp/ {
-	  auth_request /gen3-authz;
-	  auth_request_set $authorization $upstream_http_authorization;
-	  proxy_set_header Authorization $authorization;
-	  proxy_pass_header  Authorization;
-	  auth_request_set $_remote_user $upstream_http_remote_user;
-	  auth_request_set $_remote_roles $upstream_http_remote_roles;
-	  proxy_set_header REMOTE_USER $_remote_user;
-	  proxy_set_header REMOTE_ROLES $_remote_roles;
-	  proxy_pass_header  REMOTE_USER;
-	  proxy_pass_header  REMOTE_ROLES;
-	  rewrite ^/tmp/(.*)$ /$1 break;
-	  # proxy_pass http://tmp-service:3838/;
-
-		# websocket headers
-		proxy_set_header Upgrade $http_upgrade;
-		proxy_set_header Connection $connection_upgrade;
-		
-	}
-	##
 	# for voucher
 	##
 	location = /vouch-auth {
