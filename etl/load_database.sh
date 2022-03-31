@@ -34,23 +34,17 @@ done
 
 # ensure graph exists
 grip create $graph --host grip:8202
+echo "Created graph. " $graph
 
-gofast="--numInsertionWorkers 24 --writeConcern 0 --bypassDocumentValidation --host=mongo"
+
+gofast="-n 24 --database grip --mongo-host mongodb://mongo"
 
 for f in $(cat $file_manifest | grep "Vertex"); do
-		if [[ $f =~ \.gz$ ]]; then
-				gunzip -c $f | mongoimport -d grip -c ${graph}_vertices --type json $gofast
-		else
-				mongoimport -d grip -c ${graph}_vertices --type json --file $f $gofast
-		fi
+	grip mongoload ${graph} $gofast --vertex $f
 done
 
 for f in $(cat $file_manifest | grep "Edge"); do
-		if [[ $f =~ \.gz$ ]]; then
-				gunzip -c $f | mongoimport -d grip -c ${graph}_edges --type json $gofast
-		else
-				mongoimport -d grip -c ${graph}_edges --type json --file $f $gofast
-		fi
+	grip mongoload ${graph} $gofast --edge $f
 done
 
 echo "removing soft link ./outputs"
