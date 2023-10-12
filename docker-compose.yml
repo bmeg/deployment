@@ -9,7 +9,7 @@ services:
        - /mnt/data1/bmeg/mongo-data:/data/db
 
   grip:
-    image: bmeg/grip
+    image: bmeg/grip:0.7.1
     restart: unless-stopped    
     # build: grip
     container_name: grip
@@ -35,45 +35,45 @@ services:
       - 443:443
     volumes:
       # content
-      - ./nginx/bmeg-site/bmegio.ohsu.edu/public:/usr/share/nginx/bmegio.ohsu.edu
-      - ./nginx/bmeg-site/bmeg.io/public:/usr/share/nginx/bmeg.io
-      - ./nginx/usr/share/nginx/gen3-ohsu.ddns.net:/usr/share/nginx/gen3-ohsu.ddns.net
+      - /mnt/data2/bmeg/deployment/nginx/bmeg-site/bmegio.ohsu.edu/public:/usr/share/nginx/bmegio.ohsu.edu
+      - /mnt/data2/bmeg/deployment/nginx/bmeg-site/bmeg.io/public:/usr/share/nginx/bmeg.io
+      - /mnt/data2/bmeg/deployment/nginx/usr/share/nginx/gen3-ohsu.ddns.net:/usr/share/nginx/gen3-ohsu.ddns.net
       - /mnt/data2/bmeg/bmeg-data:/usr/share/nginx/bmegio.ohsu.edu.data
       - /mnt/data2/bmeg/bmeg-data:/usr/share/nginx/bmeg.io.data
       - /mnt/data2/bmeg/bmeg-share:/usr/share/nginx/bmegio.ohsu.edu.share
       - /mnt/data2/bmeg/bmeg-share:/usr/share/nginx/bmeg.io.share
       - /mnt/data2/recount/data:/usr/share/nginx/recount.bio.data
-      - ./nginx/usr/share/nginx/recount.bio:/usr/share/nginx/recount.bio
+      - /mnt/data2/bmeg/deployment/nginx/usr/share/nginx/recount.bio:/usr/share/nginx/recount.bio
 
       # config
-      - ./nginx/etc/nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./nginx/etc/nginx/http.conf.d/env.conf:/etc/nginx/http.conf.d/env.conf
-      - ./nginx/etc/nginx/conf.d/default.conf:/etc/nginx/conf.d/default.conf
-      - ./nginx/etc/nginx/protected.conf:/etc/nginx/protected.conf
-      - ./nginx/etc/nginx/grip-bmeg.io.conf:/etc/nginx/grip-bmeg.io.conf
-      - ./nginx/etc/nginx/grip-bmegio.ohsu.edu.conf:/etc/nginx/grip-bmegio.ohsu.edu.conf
-      - ./nginx/etc/nginx/lua/nginx-google-oauth/access.lua:/etc/nginx/lua/nginx-google-oauth/access.lua
+      - /mnt/data2/bmeg/deployment/nginx/etc/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - /mnt/data2/bmeg/deployment/nginx/etc/nginx/http.conf.d/env.conf:/etc/nginx/http.conf.d/env.conf
+      - /mnt/data2/bmeg/deployment/nginx/etc/nginx/conf.d/default.conf:/etc/nginx/conf.d/default.conf
+      - /mnt/data2/bmeg/deployment/nginx/etc/nginx/protected.conf:/etc/nginx/protected.conf
+      - /mnt/data2/bmeg/deployment/nginx/etc/nginx/grip-bmeg.io.conf:/etc/nginx/grip-bmeg.io.conf
+      - /mnt/data2/bmeg/deployment/nginx/etc/nginx/grip-bmegio.ohsu.edu.conf:/etc/nginx/grip-bmegio.ohsu.edu.conf
+      - /mnt/data2/bmeg/deployment/nginx/etc/nginx/lua/nginx-google-oauth/access.lua:/etc/nginx/lua/nginx-google-oauth/access.lua
 
       # specific sites
-      - ./nginx/etc/nginx/sites-enabled/bmegio.ohsu.edu:/etc/nginx/sites-enabled/bmegio.ohsu.edu:ro
-      - ./nginx/etc/nginx/sites-enabled/gen3-ohsu.ddns.net:/etc/nginx/sites-enabled/gen3-ohsu.ddns.net:ro
-      - ./nginx/etc/nginx/sites-enabled/bmeg-jupyter.ddns.net:/etc/nginx/sites-enabled/bmeg-jupyter.ddns.net:ro
-      - ./nginx/etc/nginx/sites-enabled/bmeg.io:/etc/nginx/sites-enabled/bmeg.io:ro
-      - ./nginx/etc/nginx/sites-enabled/recount.bio:/etc/nginx/sites-enabled/recount.bio:ro
-      - ./nginx/etc/nginx/sites-enabled/methylation.recount.bio:/etc/nginx/sites-enabled/methylation.recount.bio:ro
+      - /mnt/data2/bmeg/deployment/nginx/etc/nginx/sites-enabled/bmegio.ohsu.edu:/etc/nginx/sites-enabled/bmegio.ohsu.edu:ro
+      - /mnt/data2/bmeg/deployment/nginx/etc/nginx/sites-enabled/gen3-ohsu.ddns.net:/etc/nginx/sites-enabled/gen3-ohsu.ddns.net:ro
+      - /mnt/data2/bmeg/deployment/nginx/etc/nginx/sites-enabled/bmeg-jupyter.ddns.net:/etc/nginx/sites-enabled/bmeg-jupyter.ddns.net:ro
+      - /mnt/data2/bmeg/deployment/nginx/etc/nginx/sites-enabled/bmeg.io:/etc/nginx/sites-enabled/bmeg.io:ro
+      - /mnt/data2/bmeg/deployment/nginx/etc/nginx/sites-enabled/recount.bio:/etc/nginx/sites-enabled/recount.bio:ro
+      - /mnt/data2/bmeg/deployment/nginx/etc/nginx/sites-enabled/methylation.recount.bio:/etc/nginx/sites-enabled/methylation.recount.bio:ro
 
       # testing
-      - ./nginx/etc/nginx/sites-enabled/commons.bmeg.io:/etc/nginx/sites-enabled/commons.bmeg.io:ro
+      - /mnt/data2/bmeg/deployment/nginx/etc/nginx/sites-enabled/commons.bmeg.io:/etc/nginx/sites-enabled/commons.bmeg.io:ro
       # - ./nginx/etc/nginx/sites-enabled/bmegio-test.ddns.net:/etc/nginx/sites-enabled/bmegio-test.ddns.net:ro
       # - ./nginx/bmeg-site/bmegio-test.ddns.net/public:/usr/share/nginx/bmegio-test.ddns.net
       # - ./nginx/etc/nginx/grip-bmegio-test.ddns.net.conf:/etc/nginx/grip-bmegio-test.ddns.net.conf
 
       # for letsencrypt
-      - ./data/certbot/conf:/etc/letsencrypt
-      - ./data/certbot/www:/var/www/certbot
+      - /mnt/data2/bmeg/deployment/data/certbot/conf:/etc/letsencrypt
+      - /mnt/data2/bmeg/deployment/data/certbot/www:/var/www/certbot
 
       # startup
-      - ./nginx/run.sh:/etc/nginx/run.sh
+      - /mnt/data2/bmeg/deployment/nginx/run.sh:/etc/nginx/run.sh
 
     depends_on:
       - grip

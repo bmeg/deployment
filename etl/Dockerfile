@@ -12,8 +12,8 @@ RUN apt-get update
 RUN apt-get install -y mongodb-org-tools
 
 # install go lang, silence wget and tar
-RUN wget -q  https://dl.google.com/go/go1.12.4.linux-amd64.tar.gz && \
-  tar -xf go1.12.4.linux-amd64.tar.gz
+RUN wget -q  https://dl.google.com/go/go1.17.2.linux-amd64.tar.gz && \
+  tar -xf go1.17.2.linux-amd64.tar.gz
 
 # install grip
 RUN mkdir -p /go/src/github.com/bmeg
