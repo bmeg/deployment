@@ -6,14 +6,26 @@ FROM python:3.7.2
 # Uses service_account_email argument and config/service_account.json
 
 # install mongo import
-RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 9DA31620334BD75D9DCB49F368818C72E52529D4
-RUN echo "deb http://repo.mongodb.org/apt/debian stretch/mongodb-org/4.0 main" | tee /etc/apt/sources.list.d/mongodb-org-4.0.list
+
+RUN apt-get install gnupg curl
+
+RUN sed -i -e 's/deb.debian.org/archive.debian.org/g' \
+           -e 's|security.debian.org|archive.debian.org/|g' \
+           -e '/stretch-updates/d' /etc/apt/sources.list
+
+RUN curl -fsSL https://pgp.mongodb.com/server-4.4.asc | \
+    gpg -o /usr/share/keyrings/mongodb-server-4.4.gpg \
+   --dearmor
+
+RUN echo "deb [ signed-by=/usr/share/keyrings/mongodb-server-4.4.gpg ] http://repo.mongodb.org/apt/debian stretch/mongodb-org/4.4 main" | tee /etc/apt/sources.list.d/mongodb-org-4.4.list
+
 RUN apt-get update
 RUN apt-get install -y mongodb-org-tools
 
+
 # install go lang, silence wget and tar
-RUN wget -q  https://dl.google.com/go/go1.12.4.linux-amd64.tar.gz && \
-  tar -xf go1.12.4.linux-amd64.tar.gz
+RUN wget -q  https://dl.google.com/go/go1.20.5.linux-amd64.tar.gz && \
+  tar -xf go1.20.5.linux-amd64.tar.gz
 
 # install grip
 RUN mkdir -p /go/src/github.com/bmeg

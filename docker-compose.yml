@@ -2,20 +2,21 @@ version: '3.4'
 services:
 
   mongo:
-    image: mongo:3.6
+    image: mongo:6.0.10
     restart: unless-stopped    
     container_name: mongo
     volumes:
        - /mnt/data1/bmeg/mongo-data:/data/db
 
   grip:
-    image: bmeg/grip
+    image: bmeg/grip:latest
     restart: unless-stopped    
     # build: grip
     container_name: grip
     volumes:
-        - ./secrets/grip_config.yml:/config/grip_config.yml
+        - /mnt/data2/bmeg/deployment/secrets/grip_config.yml:/config/grip_config.yml
     entrypoint: ["grip", "server", "--config", "/config/grip_config.yml"]
+          #entrypoint: ["sleep", "3000"]
     ports:
       - 8201:8201
       - 8202:8202
@@ -139,7 +140,7 @@ services:
   # see https://www.neteye-blog.com/2018/04/how-to-monitor-docker-containers-using-cadvisor-part-1/
   cadvisor:
     container_name: cadvisor       # The service will use this container name.
-    image: google/cadvisor:latest
+    image: gcr.io/cadvisor/cadvisor # old image replaced with newer image
     restart: unless-stopped    
     volumes:
     - /:/rootfs:ro

@@ -4,4 +4,4 @@ RUN pip install gripql
 USER root
 RUN apt-get update && apt-get install -y graphviz graphviz-dev gcc
 USER $NB_UID
-RUN pip install pygraphviz
+RUN pip install pygraphviz==1.5
