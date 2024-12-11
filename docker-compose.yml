@@ -38,13 +38,13 @@ services:
       # content
       - /mnt/data2/bmeg/deployment/nginx/bmeg-site/bmegio.ohsu.edu/public:/usr/share/nginx/bmegio.ohsu.edu
       - /mnt/data2/bmeg/deployment/nginx/bmeg-site/bmeg.io/public:/usr/share/nginx/bmeg.io
-      - /mnt/data2/bmeg/deployment/nginx/usr/share/nginx/gen3-ohsu.ddns.net:/usr/share/nginx/gen3-ohsu.ddns.net
+      #- /mnt/data2/bmeg/deployment/nginx/usr/share/nginx/gen3-ohsu.ddns.net:/usr/share/nginx/gen3-ohsu.ddns.net
       - /mnt/data2/bmeg/bmeg-data:/usr/share/nginx/bmegio.ohsu.edu.data
       - /mnt/data2/bmeg/bmeg-data:/usr/share/nginx/bmeg.io.data
       - /mnt/data2/bmeg/bmeg-share:/usr/share/nginx/bmegio.ohsu.edu.share
       - /mnt/data2/bmeg/bmeg-share:/usr/share/nginx/bmeg.io.share
-      - /mnt/data2/recount/data:/usr/share/nginx/recount.bio.data
-      - /mnt/data2/bmeg/deployment/nginx/usr/share/nginx/recount.bio:/usr/share/nginx/recount.bio
+      - /mnt/data2/recount/data:/usr/share/nginx/recount.bio
+      - /mnt/data2/recount/data:/usr/share/nginx/methylation.recount.bio
 
       # config
       - /mnt/data2/bmeg/deployment/nginx/etc/nginx/nginx.conf:/etc/nginx/nginx.conf
@@ -57,17 +57,14 @@ services:
 
       # specific sites
       - /mnt/data2/bmeg/deployment/nginx/etc/nginx/sites-enabled/bmegio.ohsu.edu:/etc/nginx/sites-enabled/bmegio.ohsu.edu:ro
-      - /mnt/data2/bmeg/deployment/nginx/etc/nginx/sites-enabled/gen3-ohsu.ddns.net:/etc/nginx/sites-enabled/gen3-ohsu.ddns.net:ro
-      - /mnt/data2/bmeg/deployment/nginx/etc/nginx/sites-enabled/bmeg-jupyter.ddns.net:/etc/nginx/sites-enabled/bmeg-jupyter.ddns.net:ro
+        #- /mnt/data2/bmeg/deployment/nginx/etc/nginx/sites-enabled/gen3-ohsu.ddns.net:/etc/nginx/sites-enabled/gen3-ohsu.ddns.net:ro
+        #- /mnt/data2/bmeg/deployment/nginx/etc/nginx/sites-enabled/bmeg-jupyter.ddns.net:/etc/nginx/sites-enabled/bmeg-jupyter.ddns.net:ro
       - /mnt/data2/bmeg/deployment/nginx/etc/nginx/sites-enabled/bmeg.io:/etc/nginx/sites-enabled/bmeg.io:ro
       - /mnt/data2/bmeg/deployment/nginx/etc/nginx/sites-enabled/recount.bio:/etc/nginx/sites-enabled/recount.bio:ro
       - /mnt/data2/bmeg/deployment/nginx/etc/nginx/sites-enabled/methylation.recount.bio:/etc/nginx/sites-enabled/methylation.recount.bio:ro
 
       # testing
       - /mnt/data2/bmeg/deployment/nginx/etc/nginx/sites-enabled/commons.bmeg.io:/etc/nginx/sites-enabled/commons.bmeg.io:ro
-      # - ./nginx/etc/nginx/sites-enabled/bmegio-test.ddns.net:/etc/nginx/sites-enabled/bmegio-test.ddns.net:ro
-      # - ./nginx/bmeg-site/bmegio-test.ddns.net/public:/usr/share/nginx/bmegio-test.ddns.net
-      # - ./nginx/etc/nginx/grip-bmegio-test.ddns.net.conf:/etc/nginx/grip-bmegio-test.ddns.net.conf
 
       # for letsencrypt
       - /mnt/data2/bmeg/deployment/data/certbot/conf:/etc/letsencrypt
