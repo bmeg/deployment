@@ -18,7 +18,8 @@ server {
 
   # data
   location / {
-    alias /usr/share/nginx/recount.bio.data/; # directory to list
+    # alias /usr/share/nginx/recount.bio.data/; # directory to list
+    alias /usr/share/nginx/methylation.recount.bio/; #directory to list
     autoindex on;
   }
   # for certbot challenge

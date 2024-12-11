@@ -1,8 +1,8 @@
 -- Copyright 2015-2016 CloudFlare
 -- Copyright 2014-2015 Aaron Westendorf
 
-local json = require("cjson")
 local http = require("resty.http")
+local json = require("cjson")
 
 local uri         = ngx.var.uri
 local uri_args    = ngx.req.get_uri_args()
